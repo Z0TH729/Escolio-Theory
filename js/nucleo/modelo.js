@@ -32,15 +32,19 @@
   };
   modelo.criarNo = function (dados) {
     dados = dados || {};
+    const tipo = dados.tipo || "conceito";
+    const estiloPadrao = tipo === "texto" ? { cor: "#e8edf4", fundo: "transparent", contorno: "none", tamanhoFonte: 14, familiaFonte: null } : { cor: "#2b4c7e" };
     return {
       id: dados.id || id("no"),
-      tipo: dados.tipo || "conceito",
+      tipo: tipo,
       titulo: dados.titulo || "Novo elemento",
       corpo: dados.corpo || "",
       campos: modelo.clonar(dados.campos || {}),
       pastaId: dados.pastaId || null,
       pos: { x: Number(dados.pos && dados.pos.x) || 0, y: Number(dados.pos && dados.pos.y) || 0 },
-      estilo: { cor: dados.estilo && dados.estilo.cor || "#2b4c7e" }
+      estilo: Object.assign(estiloPadrao, modelo.clonar(dados.estilo || {})),
+      dimensoes: tipo === "texto" ? Object.assign({ largura: 280, altura: null, modoAltura: "auto" }, modelo.clonar(dados.dimensoes || {})) : undefined,
+      ancoras: tipo === "texto" ? Object.assign({ esquerda: true, direita: true, cima: true, baixo: true }, modelo.clonar(dados.ancoras || {})) : undefined
     };
   };
   modelo.criarAresta = function (de, para, dados) {

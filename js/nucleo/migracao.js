@@ -35,7 +35,7 @@
       });
       if (!Array.isArray(projeto.pastas)) projeto.pastas = [];
       if (!Array.isArray(projeto.paletas)) projeto.paletas = [];
-      projeto.nos.forEach(no => { if (no.pastaId === undefined) no.pastaId = null; });
+      projeto.nos.forEach(no => { if (no.pastaId === undefined) no.pastaId = null; if (no.tipo === "texto") { no.dimensoes = Object.assign({ largura: 280, altura: null, modoAltura: "auto" }, no.dimensoes || {}); no.ancoras = Object.assign({ esquerda: true, direita: true, cima: true, baixo: true }, no.ancoras || {}); no.estilo = Object.assign({ fundo: "transparent", contorno: "none", tamanhoFonte: 14 }, no.estilo || {}); } });
       projeto.arestas.forEach(aresta => { if (aresta.modo === undefined) aresta.modo = "livre"; });
       projeto.visoes = projeto.visoes.map((visao, indice) => {
         if (!visao || typeof visao !== "object" || Array.isArray(visao)) {
@@ -52,7 +52,7 @@
     }
     if (!Array.isArray(projeto.pastas)) projeto.pastas = [];
     if (!Array.isArray(projeto.paletas)) projeto.paletas = [];
-    projeto.nos.forEach(no => { if (no.pastaId === undefined) no.pastaId = null; });
+    projeto.nos.forEach(no => { if (no.pastaId === undefined) no.pastaId = null; if (no.tipo === "texto") { no.dimensoes = Object.assign({ largura: 280, altura: null, modoAltura: "auto" }, no.dimensoes || {}); no.ancoras = Object.assign({ esquerda: true, direita: true, cima: true, baixo: true }, no.ancoras || {}); no.estilo = Object.assign({ fundo: "transparent", contorno: "none", tamanhoFonte: 14 }, no.estilo || {}); } });
     projeto.arestas.forEach(aresta => { if (aresta.modo === undefined) aresta.modo = "livre"; });
     return projeto;
   };
