@@ -24,7 +24,7 @@
     if(!file)throw Error("Selecione uma imagem.");
     const ext=(file.name.split(".").pop()||"").toLowerCase();
     if(!allowed.has(file.type)&&!(ext==="jpg"||ext==="jpeg"||ext==="png"||ext==="webp"||ext==="svg"))throw Error("Formato não suportado. Use PNG, JPG, WEBP ou SVG.");
-    if(file.size>maxBytes)throw Error("A imagem excede o limite de 12 MB.");
+    if(file.size>maxBytes)throw Error("A imagem excede o limite de 2 MB.");
     if(file.type==="image/svg+xml"||ext==="svg"){
       const clean=sanitizeSvg(await file.text());
       return "data:image/svg+xml;base64,"+btoa(unescape(encodeURIComponent(clean)));
