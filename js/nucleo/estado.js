@@ -98,6 +98,14 @@
       E.nucleo.modelo.removerNo(p, identificador);
     });
   };
+  estado.atualizarAresta = function (identificador, dados) {
+    alterar(p => {
+      const aresta = p.arestas.find(a => a.id === identificador);
+      if (!aresta) throw new Error("Aresta não encontrada.");
+      if (!dados || typeof dados !== "object" || Array.isArray(dados)) throw new TypeError("Dados da aresta inválidos.");
+      if (Object.prototype.hasOwnProperty.call(dados, "rotulo")) aresta.rotulo = dados.rotulo;
+    });
+  };
   estado.removerAresta = function (identificador) {
     alterar(p => {
       if (!p.arestas.some(a => a.id === identificador)) throw new Error("Aresta não encontrada.");
