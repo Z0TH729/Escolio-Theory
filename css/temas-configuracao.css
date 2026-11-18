@@ -35,3 +35,14 @@
 .theme-mode-row{display:flex;align-items:center;gap:8px;margin:9px 0;font-size:10px}
 @media(max-width:1000px){.theme-center{grid-template-columns:1fr}.theme-library{grid-template-columns:repeat(3,minmax(0,1fr))}}
 @media(max-width:600px){.theme-library{grid-template-columns:repeat(2,minmax(0,1fr))}.theme-color-row{grid-template-columns:1fr 38px}.theme-color-values{grid-column:1/-1}}
+
+.home-main{overflow:auto;min-height:0}
+.theme-live-preview{border:1px solid var(--line);border-radius:6px;overflow:hidden;margin:12px 0;background:var(--bg);color:var(--text)}
+.theme-preview-top{display:flex;justify-content:space-between;padding:8px 10px;background:var(--panel);border-bottom:1px solid var(--line);font-size:9px;color:var(--muted)}
+.theme-preview-body{display:flex;gap:12px;padding:12px;min-height:105px}
+.theme-preview-body aside{width:48px;display:grid;align-content:start;gap:8px;padding:8px;background:var(--panel);border-radius:4px}
+.theme-preview-body aside i{height:5px;border-radius:4px;background:var(--muted);opacity:.7}
+.theme-preview-body>div{flex:1;min-width:0}
+.theme-preview-body strong{font-size:11px}
+.theme-preview-body p{font-size:9px;color:var(--muted);margin:6px 0 10px}
+.theme-preview-body button{font-size:9px;padding:5px 8px;background:var(--accent2);border-color:var(--accent);color:white}
