@@ -28,3 +28,8 @@
 .node.selected .image-node-frame{stroke:#a8c6f2;stroke-dasharray:4 3}
 .image-node .connection-port{opacity:.08}
 .image-node.selected .connection-port,.image-node:hover .connection-port{opacity:1}
+
+.pt-image-import{display:inline-flex;align-items:center;gap:8px;padding:7px 10px;border:1px solid var(--line);border-radius:6px;font-size:11px;cursor:pointer}
+.pt-image-import input{max-width:190px;font-size:10px}
+.pt-image-preview{display:block;max-width:min(100%,520px);max-height:280px;object-fit:contain;margin:10px 0;border:1px solid var(--line);border-radius:5px;background:#0b1119}
+.pt-block [data-image-caption]{display:block;width:min(100%,520px);margin-top:8px;padding:8px;background:var(--panel2);color:var(--text);border:1px solid var(--line);border-radius:6px}
