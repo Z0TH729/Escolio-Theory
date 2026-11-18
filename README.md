@@ -1,4 +1,4 @@
-# Escólio Theory
+# Escólio ⌬ Theory
 
 **Um ambiente para representar, organizar e ensinar teorias.**
 
