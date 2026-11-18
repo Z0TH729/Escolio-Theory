@@ -63,8 +63,8 @@ function choose(label,id){
  return "more";
 }
 function enhance(button){
- if(!(button instanceof HTMLButtonElement)||button.dataset.iconized||button.querySelector("svg,input,select,textarea")||button.classList.contains("nav-item")||button.classList.contains("home-action")||button.classList.contains("panel-tab")||button.classList.contains("diagram-shape-card")||button.classList.contains("palette-swatch")||button.classList.contains("recent-project-info"))return;
- if(button.closest(".nav-item,.home-action,.panel-tab,.diagram-shape-card,.palette-swatch"))return;
+ if(!(button instanceof HTMLButtonElement)||button.dataset.iconized||button.querySelector("svg,input,select,textarea")||button.classList.contains("nav-item")||button.classList.contains("home-action")||button.classList.contains("panel-tab")||button.classList.contains("diagram-shape-card")||button.classList.contains("palette-swatch")||button.matches(".home-nav button,.pt-plan-item,.pt-folder,.es-entry,.es-folder,.pt-tabs button,.es-tabs button,.fc-area-list button,.fc-entry,.tree-row")||button.querySelector("strong,small"))return;
+ if(button.closest(".nav-item,.home-action,.panel-tab,.diagram-shape-card,.palette-swatch,.home-nav,.pt-plan-item,.pt-folder,.es-entry,.es-folder,.pt-tabs,.es-tabs,.fc-area-list,.fc-entry,.tree-row"))return;
  const label=(button.innerText||button.textContent||"").replace(/\s+/g," ").trim();
  if(!label)return;
  const icon=choose(label,button.id);
