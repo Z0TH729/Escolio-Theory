@@ -20,17 +20,26 @@
 </header>
 <main class="workspace">
 <aside class="left">
-  <div class="section-label">Projeto</div>
-  <button class="action" id="new-project">＋ Novo projeto</button>
-  <button class="action" id="load-example">◈ Carregar exemplo <span>↗</span></button>
-  <div class="section-label" style="margin-top:28px">Elementos</div>
-  <button class="action primary" id="add-node">＋ Adicionar conceito</button>
-  <p>Crie elementos e organize as relações entre teorias, conceitos e aplicações.</p>
-  <div class="section-label" style="margin-top:28px">Exportação</div>
-  <button class="action" id="export-md">⇩ Exportar Markdown</button>
-  <button class="action" id="save-json-copy">⇩ Exportar projeto JSON</button>
+  <div class="section-label">Navegação</div>
+  <nav class="navigation" aria-label="Áreas do programa">
+    <button class="nav-item active" data-area="mapa"><span>⌘</span> Visão geral</button>
+    <button class="nav-item" data-area="mapas"><span>◇</span> Mapas conceituais</button>
+    <button class="nav-item" data-area="planos"><span>▤</span> Planos teóricos</button>
+    <button class="nav-item" data-area="diagramas"><span>▦</span> Diagramas</button>
+    <button class="nav-item" data-area="escolios"><span>✎</span> Escólios</button>
+    <button class="nav-item" data-area="documentos"><span>▧</span> Documentos</button>
+  </nav>
+  <div class="section-label section-heading"><span>Estrutura do projeto</span><button id="new-folder" title="Criar pasta">＋</button></div>
+  <div id="project-tree" class="project-tree" aria-label="Conteúdo do projeto"></div>
+  <div class="sidebar-actions">
+    <button class="action" id="new-project">＋ Novo projeto</button>
+    <button class="action" id="load-example">◈ Carregar exemplo</button>
+    <button class="action" id="add-node">＋ Adicionar conceito</button>
+    <button class="action" id="export-md">⇩ Exportar Markdown</button>
+    <button class="action" id="save-json-copy">⇩ Exportar projeto JSON</button>
+  </div>
   <div class="stat"><div><b id="count-nodes">0</b><small>Elementos</small></div><div><b id="count-edges">0</b><small>Relações</small></div></div>
-  <p class="footer-note">Versão 0.1.0 · Pré-alfa<br>Os dados são armazenados localmente neste navegador. Exporte o JSON para manter uma cópia externa.</p>
+  <p class="footer-note">Versão 0.1.0 · Pré-alfa<br>Dados armazenados neste navegador. Exporte o JSON para manter uma cópia externa.</p>
 </aside>
 <section class="canvas-wrap" aria-label="Mapa conceitual">
   <div class="canvas-head"><b>Mapa conceitual</b><small>Organize ideias e relações</small></div>
@@ -40,8 +49,31 @@
   <div class="status">Arraste entre pontos dos conceitos: criar conexão · Ctrl + Z: desfazer</div>
 </section>
 <aside class="right">
-  <div class="section-label">Propriedades</div><h2>Inspetor de elemento</h2>
-  <div id="inspector"><p class="hint">Carregando inspetor…</p></div>
+  <div class="panel-tabs" role="tablist" aria-label="Painéis de trabalho">
+    <button class="panel-tab active" data-panel="properties" role="tab" aria-selected="true">Propriedades</button>
+    <button class="panel-tab" data-panel="tools" role="tab" aria-selected="false">Ferramentas</button>
+    <button class="panel-tab" data-panel="colors" role="tab" aria-selected="false">Cores</button>
+  </div>
+  <section class="panel-content active" id="panel-properties">
+    <div class="section-label">Propriedades</div><h2>Inspetor de elemento</h2>
+    <div id="inspector"><p class="hint">Carregando inspetor…</p></div>
+  </section>
+  <section class="panel-content" id="panel-tools" hidden>
+    <div class="section-label">Ferramentas</div><h2>Comandos</h2>
+    <div class="tool-group"><h3>Criação</h3><button class="action" id="tool-add-node">＋ Novo conceito</button><button class="action" id="tool-add-folder">＋ Nova pasta</button></div>
+    <div class="tool-group"><h3>Edição</h3><button class="action" id="tool-duplicate">Duplicar selecionado</button><button class="action" id="tool-delete">Excluir selecionado</button></div>
+    <div class="tool-group"><h3>Histórico</h3><div class="tool-row"><button id="tool-undo">↶ Desfazer</button><button id="tool-redo">↷ Refazer</button></div></div>
+    <div class="tool-group"><h3>Visualização</h3><div class="tool-row"><button id="zoom-in">＋ Aproximar</button><button id="zoom-out">− Afastar</button></div><button class="action" id="zoom-reset">Ajustar visualização</button></div>
+    <p class="hint">As ações contextuais dependem do elemento selecionado.</p>
+  </section>
+  <section class="panel-content" id="panel-colors" hidden>
+    <div class="section-label">Personalização</div><h2>Painel de cores</h2>
+    <p class="hint">Escolha uma cor e aplique individualmente ao elemento selecionado. O significado e a organização das cores ficam a critério do usuário.</p>
+    <div class="field"><label for="element-color">Cor selecionada</label><input id="element-color" type="color" value="#2b4c7e"></div>
+    <button class="action primary" id="apply-color">Aplicar ao selecionado</button>
+    <div class="tool-group"><h3>Paleta do projeto</h3><div id="saved-palette" class="saved-palette"></div><button class="action" id="save-color">＋ Guardar cor na paleta</button></div>
+    <div class="tool-group"><h3>Cores recentes</h3><div id="recent-colors" class="saved-palette"></div></div>
+  </section>
 </aside>
 </main>
 </div>
