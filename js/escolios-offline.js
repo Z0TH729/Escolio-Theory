@@ -1,7 +1,7 @@
 /* Escólios offline · Escólio Theory */
 (function(){
 "use strict";
-const KEY="escolio-esc ol ios-v1".replace(/ /g,""),$=s=>document.querySelector(s);
+const KEY="escolio-escolios-v1",$=s=>document.querySelector(s);
 const id=p=>p+"-"+(crypto.randomUUID?crypto.randomUUID():Date.now().toString(36)+Math.random().toString(36).slice(2));
 const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const clone=x=>JSON.parse(JSON.stringify(x)),now=()=>new Date().toISOString();
