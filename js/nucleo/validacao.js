@@ -8,7 +8,7 @@
   "use strict";
   const cfg = global.Escolio.config;
   const validacao = {};
-  const tiposNo = new Set(cfg.tiposNoNucleo);
+  const tiposNo = new Set(cfg.tiposNoNucleo.concat(["texto"]));
   const tiposAresta = new Set(cfg.tiposAresta);
   const tiposEscolio = new Set(cfg.tiposEscolio);
   const tiposCampo = new Set(cfg.tiposCampo);
@@ -130,8 +130,13 @@
       if (!objeto(n.pos) || !Number.isFinite(n.pos.x) || !Number.isFinite(n.pos.y)) {
         erros.push("Posição inválida no nó " + n.id + ".");
       }
-      if (!objeto(n.estilo) || typeof n.estilo.cor !== "string" || !/^#[0-9a-f]{6}$/i.test(n.estilo.cor)) {
-        erros.push("Cor inválida no nó " + n.id + ".");
+      if (!objeto(n.estilo) || (n.estilo.cor !== undefined && typeof n.estilo.cor !== "string")) {
+        erros.push("Estilo inválido no nó " + n.id + ".");
+      }
+      if (n.tipo === "texto") {
+        if (n.dimensoes !== undefined && (!objeto(n.dimensoes) || !Number.isFinite(n.dimensoes.largura) || n.dimensoes.largura < 100 || n.dimensoes.largura > 1600 || (n.dimensoes.altura !== null && n.dimensoes.altura !== undefined && (!Number.isFinite(n.dimensoes.altura) || n.dimensoes.altura < 40 || n.dimensoes.altura > 2000)))) erros.push("Dimensões inválidas no texto " + n.id + ".");
+        if (n.dimensoes && n.dimensoes.modoAltura !== undefined && !["auto", "manual"].includes(n.dimensoes.modoAltura)) erros.push("Modo de altura inválido no texto " + n.id + ".");
+        if (n.ancoras !== undefined && (!objeto(n.ancoras) || ["esquerda","direita","cima","baixo"].some(k => n.ancoras[k] !== undefined && typeof n.ancoras[k] !== "boolean"))) erros.push("Ancoragens inválidas no texto " + n.id + ".");
       }
     });
 
