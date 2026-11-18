@@ -196,6 +196,25 @@ function renderBlocoCodigo(no,g,d){
  const ta=document.createElementNS("http://www.w3.org/1999/xhtml","textarea");ta.className="code-input";ta.value=no.corpo||"";ta.spellcheck=false;ta.wrap="off";ta.setAttribute("aria-label","Editor de código");
  function update(){const lang=detectarLinguagem(ta.value);label.textContent=lang==="texto"?"detecção automática":lang+" · detectado";code.innerHTML=destacarCodigo(ta.value,lang);gutter.textContent=Array.from({length:Math.max(1,ta.value.split("\n").length)},(_,i)=>i+1).join("\n");}
  update();ta.addEventListener("pointerdown",e=>e.stopPropagation());ta.addEventListener("input",update);
+ ta.addEventListener("keydown",e=>{
+  if(e.key==="Tab"){
+   e.preventDefault();
+   const inicio=ta.selectionStart,fim=ta.selectionEnd,valor=ta.value;
+   if(e.shiftKey){
+    const linhaInicio=valor.lastIndexOf("\\n",Math.max(0,inicio-1))+1;
+    const trecho=valor.slice(linhaInicio,fim);
+    const linhas=trecho.split("\\n");
+    let removidos=0;
+    const ajustadas=linhas.map(linha=>{if(linha.startsWith("    ")){removidos+=4;return linha.slice(4);}if(linha.startsWith("\\t")){removidos++;return linha.slice(1);}return linha;});
+    const novo=ajustadas.join("\\n");
+    ta.setRangeText(novo,linhaInicio,fim,"select");
+    ta.setSelectionRange(Math.max(linhaInicio,inicio-removidos),Math.max(linhaInicio,inicio-removidos));
+   }else{
+    ta.setRangeText("    ",inicio,fim,"end");
+   }
+   update();
+  }
+ });
  ta.addEventListener("scroll",()=>{highlight.scrollTop=ta.scrollTop;highlight.scrollLeft=ta.scrollLeft;gutter.scrollTop=ta.scrollTop;});
  ta.addEventListener("blur",()=>{if(ta.value!==(no.corpo||""))E.nucleo.estado.atualizarNo(no.id,{corpo:ta.value});});
  ta.addEventListener("keydown",e=>{if((e.ctrlKey||e.metaKey)&&e.key==="Enter"){e.preventDefault();ta.blur();}});
