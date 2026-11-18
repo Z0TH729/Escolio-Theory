@@ -4,7 +4,7 @@
 const E=window.Escolio, $=s=>document.querySelector(s);
 const svg=$("#map"), toast=$("#toast");
 let selecionado=null, arestaSelecionada=null, origemConexao=null, projeto=E.exemplos.aprendizagemSignificativa();
-let arraste=null, conexao=null, linhaTemporaria=null, bloquearCliqueAte=0, gruposNos=new Map(), elementosArestas=[];
+let arraste=null, conexao=null, linhaTemporaria=null, redimensionamento=null, bloquearCliqueAte=0, gruposNos=new Map(), elementosArestas=[];
 const centro={x:600,y:380};
 let areaAtiva="mapa", zoomAtual=1;
 function aviso(msg){toast.textContent=msg;toast.classList.add("show");clearTimeout(aviso.t);aviso.t=setTimeout(()=>toast.classList.remove("show"),2400)}
