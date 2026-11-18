@@ -142,6 +142,7 @@
       if (a.de === a.para) erros.push("Aresta " + a.id + " não pode conectar um nó a ele mesmo.");
       if (typeof a.tipo !== "string" || !tiposAresta.has(a.tipo)) erros.push("Tipo de aresta inválido: " + a.tipo);
       texto(a.rotulo, "Rótulo da aresta " + a.id, erros, 300);
+      if (a.cor !== undefined && (typeof a.cor !== "string" || !/^#[0-9a-f]{6}$/i.test(a.cor))) erros.push("Cor inválida na aresta " + a.id + ".");
       if (a.pontos !== undefined && a.pontos !== null) {
         const lados = new Set(["esquerda", "direita", "cima", "baixo"]);
         if (!objeto(a.pontos) || !lados.has(a.pontos.de) || !lados.has(a.pontos.para)) erros.push("Pontos de conexão inválidos na aresta " + a.id + ".");
