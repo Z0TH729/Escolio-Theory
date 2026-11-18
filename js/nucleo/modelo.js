@@ -42,7 +42,7 @@
   };
   modelo.criarAresta = function (de, para, dados) {
     dados = dados || {};
-    return { id: dados.id || id("aresta"), de: de, para: para, rotulo: dados.rotulo || "relaciona", tipo: dados.tipo || "relacao" };
+    return { id: dados.id || id("aresta"), de: de, para: para, rotulo: dados.rotulo || "relaciona", tipo: dados.tipo || "relacao", pontos: dados.pontos ? modelo.clonar(dados.pontos) : null };
   };
   modelo.criarEscolio = function (alvo, texto, tipo, dados) {
     dados = dados || {};
