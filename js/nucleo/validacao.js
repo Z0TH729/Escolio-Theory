@@ -138,7 +138,7 @@
         if (!objeto(im) || typeof im.assetId !== "string" || !im.assetId.trim()) erros.push("Imagem sem referência local válida: " + n.id + ".");
         if (im && (im.largura !== undefined && (!Number.isFinite(im.largura) || im.largura < 80 || im.largura > 1200) || im.altura !== undefined && (!Number.isFinite(im.altura) || im.altura < 60 || im.altura > 1200))) erros.push("Dimensões inválidas na imagem " + n.id + ".");
       }
-      if (n.tipo === "texto" || n.tipo === "imagem") {
+      if (n.tipo === "texto" || n.tipo === "imagem" || n.tipo === "formula" || n.tipo === "codigo") {
         if (n.dimensoes !== undefined && (!objeto(n.dimensoes) || !Number.isFinite(n.dimensoes.largura) || n.dimensoes.largura < (n.tipo === "imagem" ? 80 : 100) || n.dimensoes.largura > 1600 || (n.dimensoes.altura !== null && n.dimensoes.altura !== undefined && (!Number.isFinite(n.dimensoes.altura) || n.dimensoes.altura < 40 || n.dimensoes.altura > 2000)))) erros.push("Dimensões inválidas no texto " + n.id + ".");
         if (n.dimensoes && n.dimensoes.modoAltura !== undefined && !["auto", "manual"].includes(n.dimensoes.modoAltura)) erros.push("Modo de altura inválido no texto " + n.id + ".");
         if (n.ancoras !== undefined && (!objeto(n.ancoras) || ["esquerda","direita","cima","baixo"].some(k => n.ancoras[k] !== undefined && typeof n.ancoras[k] !== "boolean"))) erros.push("Ancoragens inválidas no texto " + n.id + ".");
