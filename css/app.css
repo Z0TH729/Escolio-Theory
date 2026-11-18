@@ -124,3 +124,9 @@
 .code-input::selection{background:#526d9180}
 .tok-keyword{color:#c792ea}.tok-string{color:#c3e88d}.tok-comment{color:#718096;font-style:italic}.tok-number{color:#f78c6c}.tok-function{color:#82aaff}.tok-variable{color:#f0c674}.tok-operator{color:#89ddff}
 .node.selected .code-node{outline:2px solid #8fb4e8}
+
+/* Navegação do espaço de trabalho infinito */
+.canvas-wrap{background-image:none;}
+.map{cursor:default;}
+.map.panning{cursor:grabbing;}
+.world-grid{pointer-events:none;}
