@@ -57,11 +57,13 @@ function pontoNaViewport(ev){
  const ponto=svg.createSVGPoint();ponto.x=ev.clientX;ponto.y=ev.clientY;
  const convertido=ponto.matrixTransform(matriz.inverse());return {x:convertido.x,y:convertido.y};
 }
+let temporizadorCamera=null;
+function agendarSalvamentoCamera(){clearTimeout(temporizadorCamera);temporizadorCamera=setTimeout(salvarLocal,350);}
 function aplicarCamera(){if(camadaMundo)camadaMundo.setAttribute("transform","translate("+cameraX+" "+cameraY+") scale("+zoomAtual+")");}
 function definirZoom(novoZoom,ancora){
  const limite=Math.max(.15,Math.min(4,novoZoom));
  if(ancora){const mundoX=(ancora.x-cameraX)/zoomAtual,mundoY=(ancora.y-cameraY)/zoomAtual;cameraX=ancora.x-mundoX*limite;cameraY=ancora.y-mundoY*limite;}
- zoomAtual=limite;aplicarCamera();
+ zoomAtual=limite;aplicarCamera();agendarSalvamentoCamera();
 }
 function restaurarCamera(dados){
  const c=dados&&typeof dados==="object"?dados:{};
@@ -73,7 +75,7 @@ function enquadrarConteudo(){
  let minX=Infinity,minY=Infinity,maxX=-Infinity,maxY=-Infinity;
  p.nos.forEach(n=>{const q=pos(n),d=dimensoesNo(n);minX=Math.min(minX,q.x-d.w/2);maxX=Math.max(maxX,q.x+d.w/2);minY=Math.min(minY,q.y-d.h/2);maxY=Math.max(maxY,q.y+d.h/2);});
  const largura=Math.max(1,maxX-minX),altura=Math.max(1,maxY-minY),padding=100,z=Math.max(.15,Math.min(1.5,(1200-padding*2)/largura,(760-padding*2)/altura));
- zoomAtual=z;cameraX=600-((minX+maxX)/2)*z;cameraY=380-((minY+maxY)/2)*z;aplicarCamera();
+ zoomAtual=z;cameraX=600-((minX+maxX)/2)*z;cameraY=380-((minY+maxY)/2)*z;aplicarCamera();agendarSalvamentoCamera();
 }
 window.EscolioCamera={obter:()=>({zoom:zoomAtual,x:cameraX,y:cameraY}),restaurar:restaurarCamera};
 function atualizarArestas(){
@@ -105,7 +107,7 @@ window.addEventListener("pointermove",ev=>{
  atualizarArestas();
 });
 function finalizarArraste(ev,cancelado){
-  if(arrasteCamera&&ev.pointerId===arrasteCamera.pointerId){arrasteCamera=null;svg.classList.remove("panning");return;}
+  if(arrasteCamera&&ev.pointerId===arrasteCamera.pointerId){arrasteCamera=null;svg.classList.remove("panning");bloquearCliqueAte=Date.now()+250;agendarSalvamentoCamera();return;}
  if(redimensionamento){const r=redimensionamento;redimensionamento=null;if(!cancelado){try{E.nucleo.estado.atualizarNo(r.id,{dimensoes:{largura:Math.round(r.largura),altura:Math.round(r.altura),modoAltura:"manual"}})}catch(e){aviso(e.message)}}else render();return;}
  if(conexao){
   if(ev.pointerId!==conexao.pointerId)return;
@@ -391,7 +393,7 @@ svg.addEventListener("pointerdown",ev=>{
  const mover=ev.button===1||(ev.button===0&&espacoPressionado);if(!mover||ev.target.closest("foreignObject"))return;
  ev.preventDefault();ev.stopPropagation();const p=pontoNaViewport(ev);if(!p)return;
  arrasteCamera={pointerId:ev.pointerId,inicio:p,x:cameraX,y:cameraY};svg.setPointerCapture(ev.pointerId);svg.classList.add("panning");
-});
+},true);
 window.addEventListener("keydown",ev=>{const el=ev.target,editavel=el&&(el.isContentEditable||/INPUT|TEXTAREA|SELECT/.test(el.tagName));if(ev.code==="Space"&&!editavel){espacoPressionado=true;ev.preventDefault();}});
 window.addEventListener("keyup",ev=>{if(ev.code==="Space"){espacoPressionado=false;svg.classList.remove("panning")}});
 window.addEventListener("blur",()=>{espacoPressionado=false;arrasteCamera=null;svg.classList.remove("panning")});
