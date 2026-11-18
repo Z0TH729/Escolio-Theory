@@ -1,0 +1,10 @@
+/* Sistema global de ícones SVG */
+.ui-icon{display:block;flex:0 0 16px;width:16px;height:16px;pointer-events:none}
+.icon-only-button{position:relative;display:inline-flex!important;align-items:center;justify-content:center;gap:0;min-width:34px;min-height:32px;padding:7px!important;white-space:nowrap}
+.icon-only-button .ui-icon-label{position:absolute!important;width:1px!important;height:1px!important;padding:0!important;margin:-1px!important;overflow:hidden!important;clip:rect(0,0,0,0)!important;white-space:nowrap!important;border:0!important}
+.toolbar .icon-only-button{min-width:34px;min-height:32px}
+.canvas-tools .icon-only-button{min-width:34px;padding:7px!important}
+.sidebar-actions .icon-only-button,.tool-group .icon-only-button,.pt-library-tools .icon-only-button,.pt-left-foot .icon-only-button,.es-library-tools .icon-only-button,.es-actions .icon-only-button,.es-toolbar .icon-only-button{width:100%;justify-content:center}
+button.icon-only-button:focus-visible{outline:1px solid var(--focus);outline-offset:2px}
+button.icon-only-button[disabled]{opacity:.45;cursor:not-allowed}
+@media(max-width:760px){.icon-only-button{min-width:32px;min-height:32px}}
