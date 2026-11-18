@@ -149,7 +149,27 @@
       texto(a.rotulo, "Rótulo da aresta " + a.id, erros, 300);
       if (a.modo !== undefined && a.modo !== "livre" && a.modo !== "proposicao") erros.push("Modo de relação inválido na aresta " + a.id + ".");
       if (a.modo === "proposicao" && (!a.rotulo || !a.rotulo.trim())) erros.push("Uma proposição formal precisa ter um conector textual.");
-      if (a.cor !== undefined && (typeof a.cor !== "string" || !/^#[0-9a-f]{6}$/i.test(a.cor))) erros.push("Cor inválida na aresta " + a.id + ".");
+      if (a.cor !== undefined && a.cor !== null && (typeof a.cor !== "string" || !/^#[0-9a-f]{6}$/i.test(a.cor))) erros.push("Cor inválida na aresta " + a.id + ".");
+      if (a.estilo !== undefined) {
+        const s = a.estilo;
+        const geometrias = ["reta", "ortogonal", "bezier", "arqueada", "personalizada"];
+        const tracados = ["continuo", "tracejado", "pontilhado", "traco-ponto"];
+        const extremidades = ["nenhuma", "seta", "ponto", "seta-aberta"];
+        if (!objeto(s) || (s.geometria !== undefined && !geometrias.includes(s.geometria)) ||
+            (s.tracado !== undefined && !tracados.includes(s.tracado)) ||
+            (s.extremidadeInicial !== undefined && !extremidades.includes(s.extremidadeInicial)) ||
+            (s.extremidadeFinal !== undefined && !extremidades.includes(s.extremidadeFinal)) ||
+            (s.cor !== undefined && s.cor !== null && (typeof s.cor !== "string" || !/^#[0-9a-f]{6}$/i.test(s.cor))) ||
+            (s.espessura !== undefined && (!Number.isFinite(s.espessura) || s.espessura < 0.5 || s.espessura > 12)) ||
+            (s.opacidade !== undefined && (!Number.isFinite(s.opacidade) || s.opacidade < 0 || s.opacidade > 1))) erros.push("Estilo de conexão inválido na aresta " + a.id + ".");
+      }
+      if (a.curvatura !== undefined) {
+        const c = a.curvatura;
+        if (!objeto(c) || (c.modo !== undefined && !["automatico", "manual"].includes(c.modo)) ||
+            (c.arqueamento !== undefined && (!Number.isFinite(c.arqueamento) || Math.abs(c.arqueamento) > 1000)) ||
+            ["controle1","controle2"].some(k => c[k] !== undefined && c[k] !== null && (!objeto(c[k]) || !Number.isFinite(c[k].x) || !Number.isFinite(c[k].y) || Math.abs(c[k].x) > 2000 || Math.abs(c[k].y) > 2000)) ||
+            (c.pontos !== undefined && (!Array.isArray(c.pontos) || c.pontos.length > 32 || c.pontos.some(pt => !objeto(pt) || !Number.isFinite(pt.x) || !Number.isFinite(pt.y))))) erros.push("Curvatura inválida na aresta " + a.id + ".");
+      }
       if (a.pontos !== undefined && a.pontos !== null) {
         const lados = new Set(["esquerda", "direita", "cima", "baixo"]);
         if (!objeto(a.pontos) || !lados.has(a.pontos.de) || !lados.has(a.pontos.para)) erros.push("Pontos de conexão inválidos na aresta " + a.id + ".");

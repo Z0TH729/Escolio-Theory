@@ -105,7 +105,9 @@
       if (!dados || typeof dados !== "object" || Array.isArray(dados)) throw new TypeError("Dados da aresta inválidos.");
       if (Object.prototype.hasOwnProperty.call(dados, "rotulo")) aresta.rotulo = dados.rotulo;
       if (Object.prototype.hasOwnProperty.call(dados, "modo")) aresta.modo = dados.modo;
-      if (Object.prototype.hasOwnProperty.call(dados, "cor")) aresta.cor = dados.cor;
+      if (Object.prototype.hasOwnProperty.call(dados, "cor")) { aresta.cor = dados.cor; aresta.estilo = Object.assign({}, aresta.estilo || {}, { cor: dados.cor }); }
+      if (Object.prototype.hasOwnProperty.call(dados, "estilo")) aresta.estilo = Object.assign({}, aresta.estilo || {}, E.nucleo.modelo.clonar(dados.estilo));
+      if (Object.prototype.hasOwnProperty.call(dados, "curvatura")) aresta.curvatura = Object.assign({}, aresta.curvatura || {}, E.nucleo.modelo.clonar(dados.curvatura));
     });
   };
   estado.removerAresta = function (identificador) {
