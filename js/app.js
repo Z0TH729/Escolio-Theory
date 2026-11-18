@@ -97,7 +97,7 @@ function renderizarMarkdown(texto){
   if(codigo){buffer.push(l);return;}
   let m;
   if((m=l.match(/^(#{1,3})\s+(.+)$/))){fechar();const n=m[1].length;saida.push("<h"+n+">"+m[2]+"</h"+n+">");}
-  else if((m=l.match(/^>\s?(.*)$/))){fechar();saida.push("<blockquote>"+m[1]+"</blockquote>");}
+  else if((m=l.match(/^&gt;\s?(.*)$/))){fechar();saida.push("<blockquote>"+m[1]+"</blockquote>");}
   else if((m=l.match(/^\s*[-*]\s+(.+)$/))){if(lista!=="ul"){fechar();lista="ul";saida.push("<ul>");}saida.push("<li>"+m[1]+"</li>");}
   else if((m=l.match(/^\s*\d+\.\s+(.+)$/))){if(lista!=="ol"){fechar();lista="ol";saida.push("<ol>");}saida.push("<li>"+m[1]+"</li>");}
   else if(/^---+$/.test(l)){fechar();saida.push("<hr>");}
