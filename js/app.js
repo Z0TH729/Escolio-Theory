@@ -63,7 +63,7 @@ function finalizarArraste(ev,cancelado){
   const candidatos=atual().nos.filter(x=>x.id!==inicio.id).flatMap(no=>lados.map(lado=>({no,lado,p:coordenadaPorta(no,lado)}))).map(item=>({...item,distancia:Math.hypot(item.p.x-ponto.x,item.p.y-ponto.y)})).sort((a,b)=>a.distancia-b.distancia);
   const alvo=candidatos[0];
   if(!alvo||alvo.distancia>24){aviso("Solte sobre um dos pontos de conexão do conceito.");return;}
-  try{E.nucleo.estado.adicionarAresta(inicio.id,alvo.no.id,{rotulo:"",modo:"livre",pontos:{de:inicio.lado,para:alvo.lado}});selecionado=alvo.no.id;render();aviso("Conexão criada.");}catch(err){aviso(err.message);}
+  try{const criada=E.nucleo.estado.adicionarAresta(inicio.id,alvo.no.id,{rotulo:"",modo:"livre",pontos:{de:inicio.lado,para:alvo.lado}});selecionado=null;arestaSelecionada=criada.id;render();aviso("Conexão criada. Configure o tipo e o conector no painel Propriedades.");}catch(err){aviso(err.message);}
   return;
  }
  if(!arraste)return;
@@ -138,7 +138,7 @@ function baixar(nome,conteudo,tipo){const blob=new Blob([conteudo],{type:tipo}),
 $("#add-node").onclick=novoNo;$("#add-node-top").onclick=novoNo;$("#save-json-copy").onclick=()=>$("#save-json").click();
 $("#new-folder").onclick=criarPasta;$("#tool-add-folder").onclick=criarPasta;$("#tool-add-node").onclick=novoNo;
 document.querySelectorAll(".panel-tab").forEach(tab=>tab.addEventListener("click",()=>{document.querySelectorAll(".panel-tab").forEach(x=>{x.classList.toggle("active",x===tab);x.setAttribute("aria-selected",x===tab?"true":"false")});document.querySelectorAll(".panel-content").forEach(x=>{const ativo=x.id==="panel-"+tab.dataset.panel;x.hidden=!ativo;x.classList.toggle("active",ativo)})}));
-document.querySelectorAll(".nav-item").forEach(tab=>tab.addEventListener("click",()=>{document.querySelectorAll(".nav-item").forEach(x=>x.classList.toggle("active",x===tab));areaAtiva=tab.dataset.area;if(areaAtiva!=="mapa"&&areaAtiva!=="mapas"){aviso("Esta área está prevista na navegação e será desenvolvida em uma etapa própria.");}else aviso("Área de mapas conceituais.");}));
+document.querySelectorAll(".nav-item").forEach(tab=>tab.addEventListener("click",()=>{document.querySelectorAll(".nav-item").forEach(x=>x.classList.toggle("active",x===tab));areaAtiva=tab.dataset.area;const cabecalho=document.querySelector(".canvas-head b"),subtitulo=document.querySelector(".canvas-head small"),status=document.querySelector(".status");if(areaAtiva==="mapas"){cabecalho.textContent="Mapas conceituais";subtitulo.textContent="Conceitos conectados por relações explicativas";status.textContent="Crie conexões entre conceitos e configure cada relação no painel Propriedades.";aviso("Editor de mapas conceituais ativo.");}else if(areaAtiva==="mapa"){cabecalho.textContent="Visão geral";subtitulo.textContent="Estrutura do projeto atual";status.textContent="Arraste entre pontos dos conceitos: criar conexão · Ctrl + Z: desfazer";aviso("Visão geral do projeto.");}else aviso("Esta área está prevista na navegação e será desenvolvida em uma etapa própria.");}));
 $("#apply-color").onclick=aplicarCor;
 $("#save-color").onclick=()=>{const cor=$("#element-color").value,nome=prompt("Nome para esta cor na paleta (opcional):","");E.nucleo.estado.executar(p=>{p.paletas=p.paletas||[];if(!p.paletas.some(x=>x.cor===cor&&x.nome===(nome||"")))p.paletas.push({id:"cor-"+Date.now().toString(36),cor,nome:nome||""})});aviso("Cor guardada na paleta.")};
 $("#tool-undo").onclick=()=>$("#undo").click();$("#tool-redo").onclick=()=>$("#redo").click();
