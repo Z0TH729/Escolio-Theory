@@ -77,7 +77,7 @@ function enquadrarConteudo(){
  const largura=Math.max(1,maxX-minX),altura=Math.max(1,maxY-minY),padding=100,z=Math.max(.15,Math.min(1.5,(1200-padding*2)/largura,(760-padding*2)/altura));
  zoomAtual=z;cameraX=600-((minX+maxX)/2)*z;cameraY=380-((minY+maxY)/2)*z;aplicarCamera();agendarSalvamentoCamera();
 }
-window.EscolioCamera={obter:()=>({zoom:zoomAtual,x:cameraX,y:cameraY}),restaurar:restaurarCamera};
+window.EscolioCamera={obter:()=>({zoom:zoomAtual,x:cameraX,y:cameraY}),restaurar:restaurarCamera,posicaoNaTela:(clientX,clientY)=>{const p=pontoNaViewport({clientX,clientY});if(!p)return null;return {x:(p.x-cameraX)/zoomAtual-centro.x,y:(p.y-cameraY)/zoomAtual-centro.y};}};
 function atualizarArestas(){
  elementosArestas.forEach(item=>{
   const a=item.dados,noDe=atual().nos.find(n=>n.id===a.de),noPara=atual().nos.find(n=>n.id===a.para);
