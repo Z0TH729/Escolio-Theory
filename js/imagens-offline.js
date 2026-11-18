@@ -75,6 +75,6 @@
     const b=document.createElement("button");b.id="global-images-button";b.type="button";b.textContent="Imagens";b.title="Abrir biblioteca global de imagens";b.onclick=open;toolbar.insertBefore(b,toolbar.querySelector("#save-json"));
   }
   document.addEventListener("DOMContentLoaded",installButton);
-  window.EscolioImagens={version:"1.0.0",offline:true,open,addToMap,listar:()=>items.map(({data,...x})=>x),obter:id=>items.find(x=>x.id===id)||null,exportar:()=>items.map(x=>({...x})),importar:lista=>{if(!Array.isArray(lista))return;lista.forEach(x=>{if(x&&x.id&&typeof x.data==="string"&&!items.some(y=>y.id===x.id))items.push(x)});save()}};
+  window.EscolioImagens={lerArquivo:readFile,importarArquivo:async file=>{const data=await readFile(file),item={id:uid(),name:file.name,bytes:file.size,type:file.type||"image/svg+xml",data,createdAt:new Date().toISOString()};items.push(item);save();return item},version:"1.0.0",offline:true,open,addToMap,listar:()=>items.map(({data,...x})=>x),obter:id=>items.find(x=>x.id===id)||null,exportar:()=>items.map(x=>({...x})),importar:lista=>{if(!Array.isArray(lista))return;lista.forEach(x=>{if(x&&x.id&&typeof x.data==="string"&&!items.some(y=>y.id===x.id))items.push(x)});save()}};
   installButton();
 })();
