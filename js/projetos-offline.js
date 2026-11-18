@@ -9,12 +9,12 @@ function snapshot(){return {mapa:clone(Escolio.nucleo.estado.obterProjeto()),pla
 function store(id,data){localStorage.setItem(PREFIX+id,JSON.stringify(data))}
 function load(id){try{return JSON.parse(localStorage.getItem(PREFIX+id))}catch(_){return null}}
 function saveCurrent(){if(!activeId)return;try{const p=catalog.projects.find(x=>x.id===activeId);if(!p)return;store(activeId,snapshot());p.updatedAt=now();writeCatalog()}catch(e){console.warn("Falha ao salvar o projeto:",e)}}
-function apply(data){if(!data||!data.mapa)throw Error("O projeto não contém um mapa válido.");Escolio.nucleo.estado.substituirProjeto(data.mapa);EscolioPlanos?.importar(data.planos);EscolioEscolios?.importar(data.escolios);EscolioImagens?.substituir(data.imagens||[]);saveCurrent()}
+function apply(data){if(!data||!data.mapa)throw Error("O projeto não contém um mapa válido.");Escolio.nucleo.estado.substituirProjeto(data.mapa);EscolioPlanos?.importar(data.planos);EscolioEscolios?.importar(data.escolios);EscolioImagens?.substituir(data.imagens||[]);EscolioCiencias?.importar(data.ciencias||null);saveCurrent()}
 function showEditor(){saveCurrent();$("#home-screen").hidden=true;$("#editor-app").hidden=false}
 function showHome(){saveCurrent();$("#editor-app").hidden=true;$("#home-screen").hidden=false;renderRecent();setHomeView("start")}
 function createRecord(name,data){const id="proj-"+(crypto.randomUUID?crypto.randomUUID():Date.now().toString(36)+Math.random().toString(36).slice(2)),stamp=now(),r={id,name:(name||"Projeto sem título").trim()||"Projeto sem título",createdAt:stamp,updatedAt:stamp,openedAt:stamp};catalog.projects.unshift(r);store(id,data);activeId=id;writeCatalog();apply(data);showEditor();renderRecent()}
 function blankData(name){return {mapa:Escolio.nucleo.modelo.criarProjeto(name),planos:null,escolios:null,imagens:[]}}
-function newProject(name){saveCurrent();const title=name||prompt("Nome do novo projeto:","Novo projeto");if(!title||!title.trim())return;EscolioPlanos?.importar(null);EscolioEscolios?.importar(null);EscolioImagens?.substituir([]);const d=blankData(title.trim());d.planos=EscolioPlanos?.exportar()||null;d.escolios=EscolioEscolios?.exportar()||null;createRecord(title,d)}
+function newProject(name){saveCurrent();const title=name||prompt("Nome do novo projeto:","Novo projeto");if(!title||!title.trim())return;EscolioPlanos?.importar(null);EscolioEscolios?.importar(null);EscolioImagens?.substituir([]);EscolioCiencias?.importar(null);const d=blankData(title.trim());d.planos=EscolioPlanos?.exportar()||null;d.escolios=EscolioEscolios?.exportar()||null;createRecord(title,d)}
 function openProject(id){saveCurrent();const p=catalog.projects.find(x=>x.id===id),d=load(id);if(!p||!d){alert("Não foi possível localizar os dados deste projeto.");return}activeId=id;p.openedAt=now();writeCatalog();apply(d);showEditor();renderRecent()}
 async function importFile(file){if(!file)return;try{if(file.size>20*1024*1024)throw Error("O arquivo excede o limite de 20 MB.");const x=JSON.parse(await file.text());let d,name;if(x?.format==="escolio-project"&&x.data){d=x.data;name=x.name||d.mapa?.projeto?.titulo||file.name.replace(/\.[^.]+$/,"")}else if(x?.projeto&&Array.isArray(x.nos)){d={mapa:x,planos:null,escolios:null,imagens:x.bibliotecaImagens||[]};name=x.projeto.titulo||file.name.replace(/\.[^.]+$/,"")}else throw Error("Formato não reconhecido. Selecione um arquivo de projeto Escólio JSON.");if(!d.mapa||!Array.isArray(d.mapa.nos))throw Error("Estrutura do projeto inválida.");if(!Array.isArray(d.imagens))d.imagens=[];saveCurrent();createRecord(name,d);return true}catch(e){alert("Não foi possível importar o projeto: "+e.message);return false}}
 function exportProject(){saveCurrent();const p=catalog.projects.find(x=>x.id===activeId),d=load(activeId);if(!p||!d){alert("Nenhum projeto ativo para exportar.");return}const blob=new Blob([JSON.stringify({format:"escolio-project",version:1,name:p.name,exportedAt:now(),data:d},null,2)],{type:"application/json"}),url=URL.createObjectURL(blob),a=document.createElement("a");a.href=url;a.download=(p.name.normalize("NFD").replace(/[\u0300-\u036f]/g,"").replace(/[^a-z0-9-_]+/gi,"-").replace(/^-|-$/g,"")||"projeto")+".escolio.json";a.click();setTimeout(()=>URL.revokeObjectURL(url),1000)}
@@ -37,7 +37,7 @@ function initialize(fallback){
   if(!catalog.projects.length){
    let old=fallback;
    try{old=JSON.parse(localStorage.getItem("escolio-projeto"))||fallback}catch(_){}
-   const d={mapa:old,planos:EscolioPlanos?.exportar()||null,escolios:EscolioEscolios?.exportar()||null,imagens:EscolioImagens?.exportar()||[]};
+   const d={mapa:old,planos:EscolioPlanos?.exportar()||null,escolios:EscolioEscolios?.exportar()||null,imagens:EscolioImagens?.exportar()||[],ciencias:EscolioCiencias?.exportar()||null};
    const stamp=now(),id="proj-"+(crypto.randomUUID?crypto.randomUUID():Date.now().toString(36));
    catalog.projects.push({id,name:old?.projeto?.titulo||"Projeto inicial",createdAt:old?.projeto?.criadoEm||stamp,updatedAt:stamp,openedAt:stamp});
    store(id,d);activeId=id;writeCatalog();apply(d);localStorage.removeItem("escolio-projeto");
@@ -45,7 +45,7 @@ function initialize(fallback){
    const p=catalog.projects.slice().sort((a,b)=>String(b.openedAt||b.updatedAt).localeCompare(String(a.openedAt||a.updatedAt)))[0];
    activeId=p.id;const d=load(activeId);
    if(d)apply(d);
-   else{const data={mapa:fallback,planos:EscolioPlanos?.exportar()||null,escolios:EscolioEscolios?.exportar()||null,imagens:EscolioImagens?.exportar()||[]};store(activeId,data);apply(data)}
+   else{const data={mapa:fallback,planos:EscolioPlanos?.exportar()||null,escolios:EscolioEscolios?.exportar()||null,imagens:EscolioImagens?.exportar()||[],ciencias:EscolioCiencias?.exportar()||null};store(activeId,data);apply(data)}
   }
  }catch(e){
   console.error("Falha ao restaurar o projeto:",e);
