@@ -64,7 +64,7 @@ function finalizarArraste(ev,cancelado){
   const inicio=conexao,ponto=pontoNoMapa(ev);conexao=null;
   if(linhaTemporaria){linhaTemporaria.remove();linhaTemporaria=null;}
   if(cancelado||!ponto)return;
-  const candidatos=atual().nos.filter(x=>x.id!==inicio.id).flatMap(no=>lados.map(lado=>({no,lado,p:coordenadaPorta(no,lado)}))).map(item=>({...item,distancia:Math.hypot(item.p.x-ponto.x,item.p.y-ponto.y)})).sort((a,b)=>a.distancia-b.distancia);
+  const candidatos=atual().nos.filter(x=>x.id!==inicio.id).flatMap(no=>lados.filter(lado=>!no.ancoras||no.ancoras[lado]!==false).map(lado=>({no,lado,p:coordenadaPorta(no,lado)}))).map(item=>({...item,distancia:Math.hypot(item.p.x-ponto.x,item.p.y-ponto.y)})).sort((a,b)=>a.distancia-b.distancia);
   const alvo=candidatos[0];
   if(!alvo||alvo.distancia>24){aviso("Solte sobre um dos pontos de conexão do conceito.");return;}
   try{const criada=E.nucleo.estado.adicionarAresta(inicio.id,alvo.no.id,{rotulo:"",modo:"livre",pontos:{de:inicio.lado,para:alvo.lado}});selecionado=null;arestaSelecionada=criada.id;render();aviso("Conexão criada. Configure o tipo e o conector no painel Propriedades.");}catch(err){aviso(err.message);}
