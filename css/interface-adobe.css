@@ -1,0 +1,224 @@
+/* Escólio Theory · linguagem visual Adobe híbrida
+   Camada de apresentação: não altera a lógica dos módulos. */
+:root{
+  color-scheme:dark;
+  --bg:#242424;
+  --panel:#2d2d2d;
+  --panel2:#383838;
+  --line:#454545;
+  --text:#e6e6e6;
+  --muted:#a5a5a5;
+  --accent:#8aa9cf;
+  --accent2:#405a78;
+  --danger:#d08080;
+  --shadow:0 12px 32px #0005;
+  --surface-raised:#333;
+  --surface-soft:#292929;
+  --focus:#9bb9df;
+  font-family:Inter,"Segoe UI",Roboto,Arial,sans-serif;
+}
+html,body{background:var(--bg);color:var(--text)}
+body{font-size:13px}
+button,input,textarea,select{font-family:inherit}
+button{
+  border:1px solid #505050;border-radius:4px;background:#3a3a3a;color:#e4e4e4;
+  padding:7px 10px;transition:background .12s,border-color .12s,color .12s;
+}
+button:hover{background:#484848;border-color:#777}
+button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{
+  outline:1px solid var(--focus);outline-offset:1px
+}
+button.primary{background:#4a6688;border-color:#617fa3;color:#fff}
+button.primary:hover{background:#58779d}
+button.danger{color:#e2a0a0}
+.app{grid-template-rows:56px minmax(0,1fr)}
+.topbar{
+  gap:16px;padding:0 16px;background:#303030;border-bottom:1px solid #171717;
+  box-shadow:0 1px 0 #ffffff08;z-index:20
+}
+.brand{min-width:220px;gap:9px}
+.mark{
+  width:28px;height:28px;border-radius:4px;background:#536d8b;
+  color:#fff;font-size:15px;box-shadow:none
+}
+.brand strong{font-size:13px;letter-spacing:.15px;font-weight:650}
+.brand small{font-size:10px;color:#aaa}
+.project-name{font-size:12px;color:#aaa}
+.project-name strong{color:#e6e6e6;font-weight:600}
+.toolbar{gap:5px}
+.toolbar button{min-width:32px;padding:6px 10px;font-size:11px}
+.workspace{
+  grid-template-columns:238px minmax(0,1fr) 286px;
+  background:#202020;gap:0;min-height:0
+}
+.left,.right{background:#2b2b2b;padding:14px 12px;overflow:auto}
+.left{border-right:1px solid #171717;gap:5px}
+.right{border-left:1px solid #171717;padding:0}
+.section-label{
+  color:#a8a8a8;font-size:9px;letter-spacing:1px;
+  margin:7px 0 10px;font-weight:700
+}
+.navigation{gap:2px}
+.nav-item{
+  border:1px solid transparent;border-radius:3px;padding:8px 9px;
+  color:#c4c4c4;font-size:11px;background:transparent
+}
+.nav-item span{width:23px;color:#a7a7a7}
+.nav-item:hover{background:#393939;border-color:#454545}
+.nav-item.active{background:#414141;border-color:#555;color:#fff;box-shadow:inset 2px 0 #91abc9}
+.nav-item.active span{color:#c6d8ee}
+.section-heading{margin-top:15px}
+.section-heading button{border-radius:3px}
+.project-tree{border-color:#444;max-height:31vh;padding:6px 0}
+.tree-row{border-radius:3px;padding:6px 7px;color:#d0d0d0;font-size:11px}
+.tree-row:hover,.tree-row.selected{background:#414141}
+.tree-row .tree-icon{color:#b5a17d}
+.sidebar-actions{gap:2px;margin-top:7px}
+.sidebar-actions .action{
+  border-color:transparent;background:transparent;border-radius:3px;
+  padding:7px 8px;color:#c7c7c7;font-size:10.5px
+}
+.sidebar-actions .action:hover{background:#3b3b3b;border-color:#4a4a4a}
+.left .stat{border-color:#454545;gap:7px}
+.stat div{background:#242424;border:1px solid #414141;border-radius:3px;padding:9px}
+.stat b{font-size:18px;font-weight:600}
+.stat small{font-size:9px;color:#aaa}
+.footer-note{font-size:9px;color:#888}
+.canvas-wrap{
+  background-color:#242424;
+  background-image:radial-gradient(#555 0.65px,transparent .65px);
+  background-size:20px 20px
+}
+.canvas-head{
+  top:12px;left:14px;background:#303030;border:1px solid #4a4a4a;
+  border-radius:3px;padding:8px 11px;box-shadow:0 2px 8px #0003;backdrop-filter:none
+}
+.canvas-head b{font-size:11px;font-weight:600}
+.canvas-head small{font-size:9px;color:#aaa}
+.canvas-tools{top:12px;right:14px;gap:4px}
+.canvas-tools button{background:#333;border-color:#4b4b4b;border-radius:3px;font-size:10px;padding:6px 9px}
+.canvas-tools button:hover{background:#484848}
+.status{bottom:10px;left:12px;background:#303030;border:1px solid #4a4a4a;border-radius:3px;color:#aaa}
+.node:not(.text-node) rect{fill:#363d46;stroke:#758ba5}
+.node:not(.text-node).selected rect{stroke:#b7cce5;stroke-width:2.2;filter:none}
+.node text{fill:#f0f0f0}
+.node .sub{fill:#b9c0c8}
+.edge{stroke:#9aa6b4}
+.edge.selected-edge{stroke:#c5d5e8;filter:none}
+.edge-label{fill:#d0d0d0;stroke:#242424}
+.edge-label.selected-edge-label{fill:#fff}
+.connection-port{fill:#d5dce4;stroke:#596b80}
+.connection-port:hover{fill:#9eb8d6;stroke:#e5edf7}
+.edge-preview{stroke:#b4c9e2}
+.empty div{background:#303030;border:1px solid #4b4b4b;border-radius:4px;box-shadow:0 8px 25px #0003}
+.empty h2{font-size:16px}
+.empty p{color:#b5b5b5}
+.right .panel-tabs{
+  gap:0;padding:0 8px;background:#303030;border-bottom:1px solid #171717
+}
+.panel-tab{
+  padding:12px 5px 10px;border:0;border-bottom:2px solid transparent;
+  border-radius:0;background:transparent;color:#aaa;font-size:10px
+}
+.panel-tab:hover{background:#393939;border-color:transparent}
+.panel-tab.active{color:#f1f1f1;border-bottom-color:#9bb6d7}
+.panel-content{padding:14px 13px}
+.panel-content .section-label{margin-top:2px}
+.panel-content h2,.right h2{font-size:13px;font-weight:600;color:#eee;margin-bottom:15px}
+.tool-group{border-color:#454545;padding:11px 0}
+.tool-group h3{font-size:10px;color:#aaa}
+.tool-group .action{border-radius:3px}
+.tool-row button{border-radius:3px}
+.field label{font-size:10px;color:#aaa}
+.field input,.field textarea,.field select,
+#inspector input,#inspector select,#inspector textarea{
+  background:#222;border:1px solid #505050;border-radius:3px;color:#eee
+}
+.field input:focus,.field textarea:focus{border-color:#9bb6d7}
+#element-color{background:#333;border-color:#555;border-radius:3px}
+.inspector-section{border-color:#454545}
+.inspector-section summary{font-size:10px;color:#e1e1e1}
+.diagram-tools{background:#303030;border-color:#4b4b4b;border-radius:3px}
+.diagram-tools select{background:#222;border-color:#555;border-radius:3px;color:#eee}
+.diagram-shape-card{background:#303030;border-color:#4a4a4a;border-radius:3px}
+.diagram-shape-card:hover{background:#414141;border-color:#777}
+.diagram-shape-card.selected{background:#3d4a59;border-color:#9bb6d7;box-shadow:none}
+.diagram-shape-description{border-color:#454545}
+.palette-swatch{border-radius:3px}
+.toast{background:#3c4d61;border-color:#718ba8;border-radius:4px;box-shadow:var(--shadow)}
+/* Planos Teóricos: mesma linguagem de painéis e superfícies. */
+#planos-workspace{background:#242424}
+.pt-shell{background:#242424}
+.pt-left,.pt-right{background:#2b2b2b}
+.pt-left{border-right-color:#171717}
+.pt-right{border-left-color:#171717}
+.pt-brand{color:#ddd}
+.pt-input,.pt-meta input,.pt-doc-title,.pt-doc-head textarea,.pt-field input,.pt-field select{
+  background:#222;border-color:#505050;border-radius:3px;color:#eee
+}
+.pt-library-tools button,.pt-left-foot button,.pt-top-actions button,
+.pt-block-toolbar button,.pt-add-bottom button,.pt-inspector button{border-radius:3px}
+.pt-plan-item{border-radius:3px}
+.pt-plan-item:hover{background:#393939}
+.pt-plan-item.active{background:#414141;border-color:#555;box-shadow:inset 2px 0 #91abc9}
+.pt-top{background:#303030;border-color:#171717}
+.pt-top h1{font-size:16px;font-weight:600}
+.pt-primary{background:#4a6688;border-color:#617fa3}
+.pt-editor{max-width:980px}
+.pt-block{border-radius:4px}
+.pt-block:hover,.pt-block.selected{border-color:#505050;background:#2b2b2b}
+.pt-block textarea,.pt-block input[data-content]{color:#e5e5e5}
+.pt-tabs{border-color:#454545}
+.pt-tabs button{font-size:10px}
+.pt-tabs button.active{border-bottom-color:#9bb6d7;color:#eee}
+.pt-inspector{background:#2b2b2b}
+.pt-metrics div{background:#242424;border-color:#444;border-radius:3px}
+.pt-insert-card,.pt-reference-form,.pt-history-box{background:#303030;border-color:#505050;border-radius:4px}
+/* Escólios: editor e biblioteca alinhados ao mesmo sistema visual. */
+#escolios-workspace{background:#242424}
+.es-shell{background:#242424}
+.es-left,.es-right{background:#2b2b2b}
+.es-left{border-right-color:#171717}
+.es-right{border-left-color:#171717}
+.es-input,.es-filter-row select,.es-summary,.es-inspector input,.es-inspector select{
+  background:#222;border-color:#505050;border-radius:3px;color:#eee
+}
+.es-entry,.es-folder{border-radius:3px}
+.es-entry:hover,.es-folder:hover{background:#393939}
+.es-entry.active,.es-folder.active{background:#414141;border-color:#555;box-shadow:inset 2px 0 #91abc9}
+.es-top{background:#303030;border-color:#171717}
+.es-top h1{font-size:16px;font-weight:600}
+.es-tabs{border-color:#454545}
+.es-tabs button{border-radius:0}
+.es-tabs button.active{border-bottom-color:#9bb6d7;color:#eee}
+.es-content{max-width:1020px}
+.es-title{color:#eee}
+.es-editor{background:#222;border-color:#505050;border-radius:3px;color:#e6e6e6}
+.es-editor:focus{outline:1px solid #9bb6d7}
+.es-preview{background:#292929;border-color:#505050;border-radius:3px}
+.es-link,.es-graph{background:#303030;border-color:#505050;border-radius:3px}
+.es-graph-center,.es-graph-link{border-color:#7189a5;border-radius:3px}
+.es-metrics div{background:#242424;border-color:#444;border-radius:3px}
+.es-modal-card{background:#303030;border-color:#505050;border-radius:4px}
+/* Biblioteca de imagens */
+.image-library-overlay{background:#111c}
+.image-library-modal{background:#303030;border-color:#555;border-radius:5px;box-shadow:0 14px 40px #0008}
+.image-library-card{background:#262626;border-color:#4b4b4b;border-radius:4px}
+.image-library-card img{background:#1d1d1d;border-radius:2px}
+.image-library-card button{border-radius:3px}
+/* Ajustes de densidade para telas menores. */
+@media(max-width:1100px){
+  .workspace{grid-template-columns:210px minmax(0,1fr) 260px}
+  .brand{min-width:190px}
+}
+@media(max-width:760px){
+  .app{grid-template-rows:auto minmax(0,1fr)}
+  .topbar{gap:10px;padding:10px 12px}
+  .brand{min-width:0}
+  .toolbar{flex-wrap:wrap}
+  .workspace{grid-template-columns:1fr;grid-template-rows:auto minmax(520px,65vh) auto}
+  .left{display:flex;max-height:260px;overflow:auto}
+  .right{border-left:0;border-top:1px solid #171717}
+  .panel-tabs{position:sticky;top:0;z-index:4}
+  .panel-content{max-height:420px}
+}
