@@ -167,6 +167,7 @@
         const c = a.curvatura;
         if (!objeto(c) || (c.modo !== undefined && !["automatico", "manual"].includes(c.modo)) ||
             (c.arqueamento !== undefined && (!Number.isFinite(c.arqueamento) || Math.abs(c.arqueamento) > 1000)) ||
+            ["controle1","controle2"].some(k => c[k] !== undefined && c[k] !== null && (!objeto(c[k]) || !Number.isFinite(c[k].x) || !Number.isFinite(c[k].y) || Math.abs(c[k].x) > 2000 || Math.abs(c[k].y) > 2000)) ||
             (c.pontos !== undefined && (!Array.isArray(c.pontos) || c.pontos.length > 32 || c.pontos.some(pt => !objeto(pt) || !Number.isFinite(pt.x) || !Number.isFinite(pt.y))))) erros.push("Curvatura inválida na aresta " + a.id + ".");
       }
       if (a.pontos !== undefined && a.pontos !== null) {
