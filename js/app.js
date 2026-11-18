@@ -11,6 +11,10 @@ function atual(){return E.nucleo.estado.obterProjeto()}
 function salvarLocal(){try{localStorage.setItem("escolio-projeto",JSON.stringify(atual()))}catch(e){aviso("Não foi possível salvar automaticamente.")}}
 function carregar(p){E.nucleo.estado.substituirProjeto(p);selecionado=null;render()}
 function pos(n){return {x:centro.x+n.pos.x,y:centro.y+n.pos.y}}
+const lados=["esquerda","direita","cima","baixo"];
+function coordenadaPorta(no,lado,p){p=p||pos(no);if(lado==="esquerda")return {x:p.x-94,y:p.y};if(lado==="direita")return {x:p.x+94,y:p.y};if(lado==="cima")return {x:p.x,y:p.y-35};return {x:p.x,y:p.y+35};}
+function ladoAutomatico(a,b){const p=pos(a),q=pos(b),dx=q.x-p.x,dy=q.y-p.y;return Math.abs(dx)/94>=Math.abs(dy)/35?(dx>=0?"direita":"esquerda"):(dy>=0?"baixo":"cima");}
+function extremidadesAresta(a,noDe,noPara,pDe,pPara){const ld=a.pontos&&lados.includes(a.pontos.de)?a.pontos.de:ladoAutomatico(noDe,noPara);const lp=a.pontos&&lados.includes(a.pontos.para)?a.pontos.para:ladoAutomatico(noPara,noDe);return {de:coordenadaPorta(noDe,ld,pDe),para:coordenadaPorta(noPara,lp,pPara)};}
 function pontoNoMapa(ev){
  const matriz=svg.getScreenCTM();
  if(!matriz) return null;
@@ -20,11 +24,11 @@ function pontoNoMapa(ev){
 }
 function atualizarArestas(){
  elementosArestas.forEach(item=>{
-  const a=item.dados,de=arraste&&arraste.id===a.de?arraste.pos:pos(atual().nos.find(n=>n.id===a.de));
-  const para=arraste&&arraste.id===a.para?arraste.pos:pos(atual().nos.find(n=>n.id===a.para));
-  if(!de||!para)return;
-  item.linha.setAttribute("x1",de.x);item.linha.setAttribute("y1",de.y);
-  item.linha.setAttribute("x2",para.x);item.linha.setAttribute("y2",para.y);
+  const a=item.dados,noDe=atual().nos.find(n=>n.id===a.de),noPara=atual().nos.find(n=>n.id===a.para);
+  if(!noDe||!noPara)return;
+  const pDe=arraste&&arraste.id===a.de?arraste.pos:pos(noDe),pPara=arraste&&arraste.id===a.para?arraste.pos:pos(noPara);
+  const pts=extremidadesAresta(a,noDe,noPara,pDe,pPara),de=pts.de,para=pts.para;
+  item.linha.setAttribute("x1",de.x);item.linha.setAttribute("y1",de.y);item.linha.setAttribute("x2",para.x);item.linha.setAttribute("y2",para.y);
   item.rotulo.setAttribute("x",(de.x+para.x)/2);item.rotulo.setAttribute("y",(de.y+para.y)/2-9);
  });
 }
@@ -50,10 +54,10 @@ function finalizarArraste(ev,cancelado){
   const inicio=conexao,ponto=pontoNoMapa(ev);conexao=null;
   if(linhaTemporaria){linhaTemporaria.remove();linhaTemporaria=null;}
   if(cancelado||!ponto)return;
-  const candidatos=atual().nos.filter(x=>x.id!==inicio.id).flatMap(no=>{const c=pos(no);return [[c.x-94,c.y],[c.x+94,c.y],[c.x,c.y-35],[c.x,c.y+35]].map(([x,y])=>({no,distancia:Math.hypot(x-ponto.x,y-ponto.y)}));}).sort((a,b)=>a.distancia-b.distancia);
+  const candidatos=atual().nos.filter(x=>x.id!==inicio.id).flatMap(no=>lados.map(lado=>({no,lado,p:coordenadaPorta(no,lado)}))).map(item=>({...item,distancia:Math.hypot(item.p.x-ponto.x,item.p.y-ponto.y)})).sort((a,b)=>a.distancia-b.distancia);
   const alvo=candidatos[0];
   if(!alvo||alvo.distancia>24){aviso("Solte sobre um dos pontos de conexão do conceito.");return;}
-  try{E.nucleo.estado.adicionarAresta(inicio.id,alvo.no.id,{rotulo:"relaciona"});selecionado=alvo.no.id;render();aviso("Conexão criada.");}catch(err){aviso(err.message);}
+  try{E.nucleo.estado.adicionarAresta(inicio.id,alvo.no.id,{rotulo:"relaciona",pontos:{de:inicio.lado,para:alvo.lado}});selecionado=alvo.no.id;render();aviso("Conexão criada.");}catch(err){aviso(err.message);}
   return;
  }
  if(!arraste)return;
@@ -73,9 +77,9 @@ function render(){
  const p=atual();svg.replaceChildren();
  gruposNos=new Map();elementosArestas=[];
  const camadaA=criarSvg("g",{"aria-label":"Relações"}),camadaN=criarSvg("g",{"aria-label":"Conceitos"});
- p.arestas.forEach(a=>{const de=p.nos.find(n=>n.id===a.de),para=p.nos.find(n=>n.id===a.para);if(!de||!para)return;const d=pos(de),q=pos(para),linha=criarSvg("line",{x1:d.x,y1:d.y,x2:q.x,y2:q.y,class:"edge"},camadaA);const t=criarSvg("text",{x:(d.x+q.x)/2,y:(d.y+q.y)/2-9,class:"edge-label"},camadaA);t.textContent=a.rotulo;elementosArestas.push({dados:a,linha,rotulo:t})});
+ p.arestas.forEach(a=>{const de=p.nos.find(n=>n.id===a.de),para=p.nos.find(n=>n.id===a.para);if(!de||!para)return;const pts=extremidadesAresta(a,de,para),d=pts.de,q=pts.para,linha=criarSvg("line",{x1:d.x,y1:d.y,x2:q.x,y2:q.y,class:"edge"},camadaA);const t=criarSvg("text",{x:(d.x+q.x)/2,y:(d.y+q.y)/2-9,class:"edge-label"},camadaA);t.textContent=a.rotulo;elementosArestas.push({dados:a,linha,rotulo:t})});
  p.nos.forEach(n=>{const xy=pos(n),g=criarSvg("g",{class:"node"+(n.id===selecionado?" selected":""),transform:"translate("+xy.x+" "+xy.y+")","data-id":n.id,role:"button","aria-label":n.titulo},camadaN);criarSvg("rect",{x:-94,y:-35,width:188,height:70,stroke:n.estilo.cor},g);const t=criarSvg("text",{x:0,y:-2},g);t.textContent=n.titulo.length>24?n.titulo.slice(0,22)+"…":n.titulo;const s=criarSvg("text",{x:0,y:18,class:"sub"},g);s.textContent=n.tipo;
-  [[-94,0],[94,0],[0,-35],[0,35]].forEach(([x,y])=>{const porta=criarSvg("circle",{cx:x,cy:y,r:5,class:"connection-port",tabindex:"0"},g);porta.addEventListener("pointerdown",ev=>{if(ev.button!==0)return;ev.preventDefault();ev.stopPropagation();ev.currentTarget.setPointerCapture(ev.pointerId);conexao={id:n.id,pointerId:ev.pointerId};const base=pos(n);linhaTemporaria=criarSvg("line",{x1:base.x+x,y1:base.y+y,x2:base.x+x,y2:base.y+y,class:"edge edge-preview"},camadaA);});});
+  [["esquerda",-94,0],["direita",94,0],["cima",0,-35],["baixo",0,35]].forEach(([lado,x,y])=>{const porta=criarSvg("circle",{cx:x,cy:y,r:5,class:"connection-port",tabindex:"0"},g);porta.addEventListener("pointerdown",ev=>{if(ev.button!==0)return;ev.preventDefault();ev.stopPropagation();ev.currentTarget.setPointerCapture(ev.pointerId);conexao={id:n.id,lado,pointerId:ev.pointerId};const base=pos(n);linhaTemporaria=criarSvg("line",{x1:base.x+x,y1:base.y+y,x2:base.x+x,y2:base.y+y,class:"edge edge-preview"},camadaA);});});
   gruposNos.set(n.id,g);g.addEventListener("pointerdown",ev=>iniciarArraste(ev,n.id,n));g.addEventListener("click",ev=>{ev.stopPropagation();if(Date.now()<bloquearCliqueAte)return;if(selecionado!==n.id){selecionado=n.id;gruposNos.forEach((grupo,id)=>grupo.classList.toggle("selected",id===n.id));renderInspector(atual());}});
  g.addEventListener("dblclick",ev=>{ev.preventDefault();ev.stopPropagation();if(Date.now()<bloquearCliqueAte)return;selecionado=n.id;origemConexao=null;gruposNos.forEach((grupo,id)=>grupo.classList.toggle("selected",id===n.id));renderInspector(atual());$("#node-title")?.focus();$("#node-title")?.select();aviso("Edição aberta no painel de propriedades.");});});
  $("#empty").hidden=p.nos.length>0;$("#count-nodes").textContent=p.nos.length;$("#count-edges").textContent=p.arestas.length;$("#project-title").textContent=p.projeto.titulo;
