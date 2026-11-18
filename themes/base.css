@@ -17,3 +17,14 @@ small,p,.hint,.muted,.brand small,.home-welcome p,.settings-heading p,.home-sect
 .edge-label{fill:var(--text);stroke:var(--bg)}
 .mark{background:linear-gradient(145deg,var(--accent),var(--accent2))!important}
 .toast{background:var(--panel2);color:var(--text);border-color:var(--accent)}
+
+/* Tokens adicionais do editor visual */
+.canvas-wrap{background-color:var(--canvas,var(--bg))!important}
+.canvas-head,.canvas-tools button,.status,.panel-tabs{background-color:var(--menu,var(--panel))!important}
+button:hover{background-color:var(--buttonHover,var(--panel2))}
+button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline-color:var(--focus,var(--accent))}
+.nav-item.active,.panel-tab.active,.pt-plan-item.active,.es-entry.active,.es-folder.active{box-shadow:inset 2px 0 var(--selection,var(--accent))}
+.node:not(.text-node) rect{fill:var(--node,var(--panel2));stroke:var(--borderStrong,var(--accent))}
+.node:not(.text-node).selected rect{stroke:var(--selection,var(--accent))}
+.edge{stroke:var(--edge,var(--accent))}
+.node .connection-port{fill:var(--icon,var(--muted))}
