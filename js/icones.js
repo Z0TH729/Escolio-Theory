@@ -56,7 +56,7 @@ function choose(label,id,title){
  const s=raw.normalize("NFD").replace(/[\\u0300-\\u036f]/g,"").toLowerCase();
  const key=(id||"").toLowerCase();
  const porId={
-  "new-project":"filePlus","load-example":"bookOpen","save-json":"save","save-json-copy":"copy",
+  "new-project":"filePlus","load-example":"book","save-json":"save","save-json-copy":"copy",
   "open-json":"folderOpen","file-open":"fileImport","export-md":"fileExport",
   "add-node":"plusCircle","add-node-top":"plusCircle","tool-add-node":"plusCircle",
   "add-formula-block":"functionSquare","add-code-block":"code","add-text":"text","add-text-top":"text",
@@ -112,7 +112,8 @@ function enhance(button){
  if(button.closest(".nav-item,.home-action,.panel-tab,.diagram-shape-card,.palette-swatch,.home-nav,.pt-plan-item,.pt-folder,.es-entry,.es-folder,.pt-tabs,.es-tabs,.fc-area-list,.fc-entry,.tree-row"))return;
  const label=(button.innerText||button.textContent||"").replace(/\s+/g," ").trim();
  if(!label)return;
- const icon=choose(label,button.id,button.title);\n if(!icon)return;
+ const icon=choose(label,button.id,button.title);
+ if(!icon)return;
  if(!button.title)button.title=label;
  if(!button.getAttribute("aria-label"))button.setAttribute("aria-label",label);
  const svg=document.createElementNS(NS,"svg");svg.setAttribute("viewBox","0 0 24 24");svg.setAttribute("width","16");svg.setAttribute("height","16");svg.setAttribute("aria-hidden","true");svg.setAttribute("focusable","false");svg.setAttribute("class","ui-icon");svg.setAttribute("fill","none");svg.setAttribute("stroke","currentColor");svg.setAttribute("stroke-width","1.7");svg.setAttribute("stroke-linecap","round");svg.setAttribute("stroke-linejoin","round");svg.innerHTML=paths[icon];
