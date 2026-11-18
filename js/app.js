@@ -10,7 +10,7 @@ let areaAtiva="mapa", zoomAtual=1;
 let formaBibliotecaSelecionada="retangulo";
 function aviso(msg){toast.textContent=msg;toast.classList.add("show");clearTimeout(aviso.t);aviso.t=setTimeout(()=>toast.classList.remove("show"),2400)}
 function atual(){return E.nucleo.estado.obterProjeto()}
-function salvarLocal(){try{localStorage.setItem("escolio-projeto",JSON.stringify(atual()))}catch(e){aviso("Não foi possível salvar automaticamente.")}}
+function salvarLocal(){try{window.EscolioProjetos?.salvar()}catch(e){aviso("Não foi possível salvar automaticamente.")}}
 function carregar(p){E.nucleo.estado.substituirProjeto(p);selecionado=null;render()}
 function pos(n){return {x:centro.x+n.pos.x,y:centro.y+n.pos.y}}
 const lados=["esquerda","direita","cima","baixo"];
@@ -265,15 +265,15 @@ $("#tool-delete").onclick=()=>{if(selecionado)$("#delete-node")?.click();else if
 $("#zoom-in").onclick=()=>{zoomAtual=Math.min(1.8,zoomAtual+0.1);svg.style.transform="scale("+zoomAtual+")"};
 $("#zoom-out").onclick=()=>{zoomAtual=Math.max(.5,zoomAtual-.1);svg.style.transform="scale("+zoomAtual+")"};
 $("#zoom-reset").onclick=()=>{zoomAtual=1;svg.style.transform="scale(1)"};
-$("#new-project").onclick=()=>{if(!confirm("Criar um projeto vazio? As alterações atuais já estão salvas neste navegador."))return;const p=E.nucleo.modelo.criarProjeto("Novo projeto");carregar(p);aviso("Novo projeto criado.")};
+$("#new-project").onclick=()=>window.EscolioProjetos?.novo();
 $("#load-example").onclick=()=>{carregar(E.exemplos.aprendizagemSignificativa());aviso("Exemplo carregado.")};
-$("#save-json").onclick=()=>baixar("escolio-projeto.json",JSON.stringify(Object.assign({},atual(),{bibliotecaImagens:window.EscolioImagens?window.EscolioImagens.exportar():[]}),null,2),"application/json");
+$("#save-json").onclick=()=>window.EscolioProjetos?.exportar();
 $("#open-json").onclick=()=>$("#file-open").click();
-$("#file-open").onchange=async ev=>{const f=ev.target.files[0];if(!f)return;try{if(f.size>E.config.tamanhoMaximoArquivo)throw Error("Arquivo excede o limite de 5 MB.");const p=JSON.parse(await f.text());if(p.bibliotecaImagens&&window.EscolioImagens)window.EscolioImagens.importar(p.bibliotecaImagens);carregar(p);aviso("Projeto aberto.")}catch(e){aviso("Falha ao abrir: "+e.message)}ev.target.value=""};
+
 $("#undo").onclick=()=>{if(E.nucleo.estado.desfazer())render()};$("#redo").onclick=()=>{if(E.nucleo.estado.refazer())render()};
 $("#export-md").onclick=()=>{const p=atual();let md="# "+p.projeto.titulo+"\n\n";p.nos.forEach(n=>{if(n.tipo==="texto"){md+=n.corpo+"\n\n";return;}md+="## "+n.titulo+"\n\n"+n.corpo+"\n\n";p.escolios.filter(e=>e.alvo===n.id).forEach(e=>md+="- **Escólio ("+e.tipo+"):** "+e.texto+"\n")});md+="\n## Relações\n\n";p.arestas.forEach(a=>{const x=p.nos.find(n=>n.id===a.de),y=p.nos.find(n=>n.id===a.para);if(x&&y)md+="- "+x.titulo+" — "+(a.rotulo||"relação sem rótulo")+" → "+y.titulo+(a.modo==="proposicao"?" *(proposição formal)*":" *(relação livre)*")+"\n"});baixar("escolio-projeto.md",md,"text/markdown")};
 $("#clear-selection").onclick=()=>{selecionado=null;arestaSelecionada=null;origemConexao=null;render()};
 E.nucleo.estado.assinar(()=>{salvarLocal();render()});
-try{const salvo=localStorage.getItem("escolio-projeto");if(salvo)carregar(JSON.parse(salvo));else carregar(projeto)}catch(e){carregar(projeto);aviso("Foi usado o projeto de demonstração.")}
+window.EscolioProjetos.inicializar(projeto);
 document.addEventListener("keydown",e=>{if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==="s"){e.preventDefault();$("#save-json").click()}if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==="z"){e.preventDefault();$("#undo").click()}});
 })();

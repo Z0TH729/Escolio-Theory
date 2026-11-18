@@ -195,5 +195,5 @@
   },true);
   document.addEventListener("keydown",e=>{if(!document.querySelector(".workspace.pt-active"))return;if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==="s"){e.preventDefault();persist()}});
   window.addEventListener("beforeunload",persist);
-  window.EscolioPlanos={version:"1.0.0",offline:true};
+  window.EscolioPlanos={version:"1.0.0",offline:true,exportar:()=>clone(db),importar:dado=>{db=Object.assign(initial(),dado&&typeof dado==="object"?clone(dado):{});persist();render()}};
 })();
