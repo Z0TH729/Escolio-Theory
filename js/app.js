@@ -83,6 +83,43 @@ window.addEventListener("pointerup",ev=>finalizarArraste(ev,false));
 window.addEventListener("pointercancel",ev=>finalizarArraste(ev,true));
 svg.addEventListener("click",ev=>{if(ev.target===svg){selecionado=null;arestaSelecionada=null;origemConexao=null;gruposNos.forEach(grupo=>grupo.classList.remove("selected"));renderInspector(atual());}});
 function criarSvg(tag,attrs,parent){const el=document.createElementNS("http://www.w3.org/2000/svg",tag);Object.entries(attrs||{}).forEach(([k,v])=>el.setAttribute(k,v));(parent||svg).appendChild(el);return el}
+
+function escaparHTML(valor){return String(valor).replace(/[&<>"]/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c];});}
+function renderizarMarkdown(texto){
+ let s=escaparHTML(texto||"");
+ s=s.replace(/\\[([^\\]]+)\\]\\((https?:\\/\\/[^\\s)]+|mailto:[^\\s)]+)\\)/g,'<a href="$2" target="_blank" rel="noopener noreferrer">$1</a>');
+ s=s.replace(/\\*\\*(.+?)\\*\\*/g,"<strong>$1</strong>").replace(/\\*(.+?)\\*/g,"<em>$1</em>");
+ s=s.replace(new RegExp("`([^`]+)`","g"),"<code>$1</code>");
+ const linhas=s.split("\\n"),saida=[];let lista="",codigo=false,buffer=[];
+ function fechar(){if(lista){saida.push("</"+lista+">");lista="";}}
+ linhas.forEach(function(l){
+  if(/^\\x60{3}/.test(l)){fechar();if(codigo){saida.push("<pre><code>"+buffer.join("\\n")+"</code></pre>");buffer=[];}codigo=!codigo;return;}
+  if(codigo){buffer.push(l);return;}
+  let m;
+  if((m=l.match(/^(#{1,3})\\s+(.+)$/))){fechar();const n=m[1].length;saida.push("<h"+n+">"+m[2]+"</h"+n+">");}
+  else if((m=l.match(/^>\\s?(.*)$/))){fechar();saida.push("<blockquote>"+m[1]+"</blockquote>");}
+  else if((m=l.match(/^\\s*[-*]\\s+(.+)$/))){if(lista!=="ul"){fechar();lista="ul";saida.push("<ul>");}saida.push("<li>"+m[1]+"</li>");}
+  else if((m=l.match(/^\\s*\\d+\\.\\s+(.+)$/))){if(lista!=="ol"){fechar();lista="ol";saida.push("<ol>");}saida.push("<li>"+m[1]+"</li>");}
+  else if(/^---+$/.test(l)){fechar();saida.push("<hr>");}
+  else{fechar();if(l.trim())saida.push("<p>"+l+"</p>");}
+ });
+ fechar();if(codigo)saida.push("<pre><code>"+buffer.join("\\n")+"</code></pre>");
+ return saida.join("");
+}
+function editarTexto(no,grupo){
+ if(grupo.dataset.editando==="1")return;grupo.dataset.editando="1";
+ const div=grupo.querySelector(".text-node-content");if(!div)return;
+ const ta=document.createElement("textarea");ta.value=no.corpo||"";ta.setAttribute("aria-label","Editar conteúdo Markdown");div.replaceChildren(ta);
+ ta.addEventListener("pointerdown",function(e){e.stopPropagation();});let finalizado=false;
+ function salvar(cancelar){if(finalizado)return;finalizado=true;if(!cancelar&&ta.value!==(no.corpo||"")){try{E.nucleo.estado.atualizarNo(no.id,{corpo:ta.value});}catch(e){aviso(e.message);}}grupo.dataset.editando="0";render();}
+ ta.addEventListener("keydown",function(e){if(e.key==="Escape"){e.preventDefault();salvar(true);}else if((e.ctrlKey||e.metaKey)&&e.key==="Enter"){e.preventDefault();salvar(false);}});
+ ta.addEventListener("blur",function(){salvar(false);});ta.focus();
+}
+function novoTexto(){
+ const p=atual(),i=p.nos.length;
+ const n=E.nucleo.estado.adicionarNo({tipo:"texto",titulo:"Texto livre",corpo:"Escreva aqui em **Markdown**.",pos:{x:((i%4)-1.5)*180,y:(Math.floor(i/4)-1)*120},dimensoes:{largura:280,altura:null,modoAltura:"auto"},estilo:{cor:"#e8edf4",fundo:"transparent",contorno:"none",tamanhoFonte:14}});
+ selecionado=n.id;arestaSelecionada=null;render();aviso("Texto livre criado. Dê duplo clique para editar.");
+}
 function render(){
  const p=atual();svg.replaceChildren();
  gruposNos=new Map();elementosArestas=[];
