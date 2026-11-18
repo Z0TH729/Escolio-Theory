@@ -20,7 +20,41 @@ async function importFile(file){if(!file)return;try{if(file.size>20*1024*1024)th
 function exportProject(){saveCurrent();const p=catalog.projects.find(x=>x.id===activeId),d=load(activeId);if(!p||!d){alert("Nenhum projeto ativo para exportar.");return}const blob=new Blob([JSON.stringify({format:"escolio-project",version:1,name:p.name,exportedAt:now(),data:d},null,2)],{type:"application/json"}),url=URL.createObjectURL(blob),a=document.createElement("a");a.href=url;a.download=(p.name.normalize("NFD").replace(/[\u0300-\u036f]/g,"").replace(/[^a-z0-9-_]+/gi,"-").replace(/^-|-$/g,"")||"projeto")+".escolio.json";a.click();setTimeout(()=>URL.revokeObjectURL(url),1000)}
 function setHomeView(v){const s=v==="settings";$("#home-start-view").hidden=s;$("#home-settings-view").hidden=!s;document.querySelectorAll("[data-home-view]").forEach(b=>b.classList.toggle("active",b.dataset.homeView===v))}
 function renderRecent(){const h=$("#home-recent-list"),empty=$("#home-empty-recent");if(!h)return;h.replaceChildren();const rows=catalog.projects.slice().sort((a,b)=>String(b.openedAt||b.updatedAt).localeCompare(String(a.openedAt||a.updatedAt)));empty.hidden=rows.length>0;rows.forEach(p=>{const c=document.createElement("article");c.className="recent-project";const info=document.createElement("div");info.className="recent-project-info";const t=document.createElement("strong");t.textContent=p.name;const date=document.createElement("small");date.textContent="Modificado em "+new Date(p.updatedAt||p.createdAt).toLocaleString("pt-BR");const meta=document.createElement("span");meta.textContent="Projeto local";info.append(t,date,meta);const actions=document.createElement("div");actions.className="recent-project-actions";const open=document.createElement("button");open.className="recent-open";open.textContent="Abrir";open.onclick=()=>openProject(p.id);const menu=document.createElement("button");menu.className="recent-menu";menu.textContent="⋯";menu.title="Ações do projeto";menu.onclick=()=>{const a=prompt("Projeto: "+p.name+"\n1 Renomear\n2 Excluir");if(a==="1"){const n=prompt("Novo nome:",p.name);if(n?.trim()){p.name=n.trim();writeCatalog();renderRecent()}}if(a==="2"&&catalog.projects.length===1){alert("Mantenha ao menos um projeto. Crie outro antes de excluir este.");return}if(a==="2"&&confirm("Excluir este projeto e seus dados locais? Esta ação não pode ser desfeita.")){catalog.projects=catalog.projects.filter(x=>x.id!==p.id);localStorage.removeItem(PREFIX+p.id);writeCatalog();renderRecent()}};actions.append(open,menu);c.append(info,actions);h.append(c)})}
-function initialize(fallback){readCatalog();if(!catalog.projects.length){let old=fallback;try{old=JSON.parse(localStorage.getItem("escolio-projeto"))||fallback}catch(_){}const d={mapa:old,planos:EscolioPlanos?.exportar()||null,escolios:EscolioEscolios?.exportar()||null,imagens:EscolioImagens?.exportar()||[]},stamp=now(),id="proj-"+(crypto.randomUUID?crypto.randomUUID():Date.now().toString(36));catalog.projects.push({id,name:old.projeto?.titulo||"Projeto inicial",createdAt:old.projeto?.criadoEm||stamp,updatedAt:stamp,openedAt:stamp});store(id,d);activeId=id;writeCatalog();apply(d);localStorage.removeItem("escolio-projeto")}else{const p=catalog.projects.slice().sort((a,b)=>String(b.openedAt||b.updatedAt).localeCompare(String(a.openedAt||a.updatedAt)))[0];activeId=p.id;const d=load(activeId);if(d)apply(d);else{const data={mapa:fallback,planos:EscolioPlanos?.exportar()||null,escolios:EscolioEscolios?.exportar()||null,imagens:EscolioImagens?.exportar()||[]};store(activeId,data);apply(data)}}
-$("#home-new-project").onclick=()=>newProject();$("#home-open-project").onclick=()=>$("#file-open").click();$("#home-import-project").onclick=()=>$("#file-open").click();$("#home-refresh-recent").onclick=renderRecent;$("#back-to-home").onclick=showHome;document.querySelectorAll("[data-home-view]").forEach(b=>b.onclick=()=>setHomeView(b.dataset.homeView));$("#file-open").addEventListener("change",async e=>{const file=e.target.files[0];if(file)await importFile(file);e.target.value=""});window.addEventListener("beforeunload",saveCurrent);$("#home-screen").hidden=false;$("#editor-app").hidden=true;renderRecent()}
+function initialize(fallback){
+ // Registra os controles antes de restaurar dados. Uma falha no armazenamento
+ // não pode deixar toda a tela inicial sem resposta.
+ $("#home-new-project").onclick=()=>{try{newProject()}catch(e){console.error(e);alert("Não foi possível criar o projeto: "+e.message)}};
+ $("#home-open-project").onclick=()=>$("#file-open").click();
+ $("#home-import-project").onclick=()=>$("#file-open").click();
+ $("#home-refresh-recent").onclick=renderRecent;
+ $("#back-to-home").onclick=showHome;
+ document.querySelectorAll("[data-home-view]").forEach(b=>b.onclick=()=>setHomeView(b.dataset.homeView));
+ $("#file-open").addEventListener("change",async e=>{const file=e.target.files[0];if(file)await importFile(file);e.target.value=""});
+ window.addEventListener("beforeunload",saveCurrent);
+ $("#home-screen").hidden=false;$("#editor-app").hidden=true;
+ try{
+  readCatalog();
+  if(!catalog.projects.length){
+   let old=fallback;
+   try{old=JSON.parse(localStorage.getItem("escolio-projeto"))||fallback}catch(_){}
+   const d={mapa:old,planos:EscolioPlanos?.exportar()||null,escolios:EscolioEscolios?.exportar()||null,imagens:EscolioImagens?.exportar()||[]};
+   const stamp=now(),id="proj-"+(crypto.randomUUID?crypto.randomUUID():Date.now().toString(36));
+   catalog.projects.push({id,name:old?.projeto?.titulo||"Projeto inicial",createdAt:old?.projeto?.criadoEm||stamp,updatedAt:stamp,openedAt:stamp});
+   store(id,d);activeId=id;writeCatalog();apply(d);localStorage.removeItem("escolio-projeto");
+  }else{
+   const p=catalog.projects.slice().sort((a,b)=>String(b.openedAt||b.updatedAt).localeCompare(String(a.openedAt||a.updatedAt)))[0];
+   activeId=p.id;const d=load(activeId);
+   if(d)apply(d);
+   else{const data={mapa:fallback,planos:EscolioPlanos?.exportar()||null,escolios:EscolioEscolios?.exportar()||null,imagens:EscolioImagens?.exportar()||[]};store(activeId,data);apply(data)}
+  }
+ }catch(e){
+  console.error("Falha ao restaurar o projeto:",e);
+  activeId=null;catalog={schema:1,projects:[]};
+  try{localStorage.removeItem(KEY)}catch(_){}
+  avisoFallback();
+ }
+ renderRecent();
+}
+function avisoFallback(){const h=$("#home-empty-recent");if(h){h.hidden=false;h.querySelector("strong").textContent="Não foi possível restaurar o projeto anterior";h.querySelector("p").textContent="Crie um novo projeto ou importe um arquivo. Os dados anteriores não foram apagados dos arquivos exportados."}}
 window.EscolioProjetos={inicializar:initialize,salvar:saveCurrent,novo:newProject,abrir:openProject,voltar:showHome,exportar:exportProject,importar:importFile,ativo:()=>activeId,listar:()=>clone(catalog.projects)};
 })();
