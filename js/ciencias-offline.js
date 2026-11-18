@@ -71,6 +71,6 @@ document.addEventListener("click",ev=>{const nav=ev.target.closest('.nav-item[da
 document.addEventListener("click",ev=>{if(ev.target.closest(".nav-item")&&!ev.target.closest('.nav-item[data-area="ciencias"]')&&document.querySelector(".workspace.fc-active")){document.querySelector(".workspace").classList.remove("fc-active");$("#ciencias-workspace").hidden=true}},true);
 document.addEventListener("keydown",ev=>{if(document.querySelector(".workspace.fc-active")&&(ev.ctrlKey||ev.metaKey)&&ev.key.toLowerCase()==="s"){ev.preventDefault();persist()}});
 window.addEventListener("beforeunload",persist);
-window.EscolioCiencias={offline:true,version:"1.0.0",exportar:()=>clone(db),importar:d=>{db=Object.assign(initial(),d&&typeof d==="object"?clone(d):{});persist();if(!$("#ciencias-workspace")?.hidden)render()}};
+window.EscolioCiencias={offline:true,version:"1.0.0",exportar:()=>clone(db),importar:d=>{db=Object.assign(initial(),d&&typeof d==="object"?clone(d):{});try{localStorage.setItem("escolio-ciencias-v1",JSON.stringify(db))}catch(_){}if(!$("#ciencias-workspace")?.hidden)render()}};
 read();
 })();
