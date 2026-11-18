@@ -46,9 +46,10 @@ window.addEventListener("pointermove",ev=>{
 });
 function finalizarArraste(ev,cancelado){
  if(conexao){
+  if(ev.pointerId!==conexao.pointerId)return;
   const inicio=conexao,ponto=pontoNoMapa(ev);conexao=null;
   if(linhaTemporaria){linhaTemporaria.remove();linhaTemporaria=null;}
-  if(!ponto)return;
+  if(cancelado||!ponto)return;
   const candidatos=atual().nos.filter(x=>x.id!==inicio.id).flatMap(no=>{const c=pos(no);return [[c.x-94,c.y],[c.x+94,c.y],[c.x,c.y-35],[c.x,c.y+35]].map(([x,y])=>({no,distancia:Math.hypot(x-ponto.x,y-ponto.y)}));}).sort((a,b)=>a.distancia-b.distancia);
   const alvo=candidatos[0];
   if(!alvo||alvo.distancia>24){aviso("Solte sobre um dos pontos de conexão do conceito.");return;}
@@ -64,8 +65,8 @@ function finalizarArraste(ev,cancelado){
   catch(err){aviso("Não foi possível mover: "+err.message);render()}
  }
 }
-svg.addEventListener("pointerup",ev=>finalizarArraste(ev,false));
-svg.addEventListener("pointercancel",ev=>finalizarArraste(ev,true));
+window.addEventListener("pointerup",ev=>finalizarArraste(ev,false));
+window.addEventListener("pointercancel",ev=>finalizarArraste(ev,true));
 svg.addEventListener("click",ev=>{if(ev.target===svg){selecionado=null;origemConexao=null;gruposNos.forEach(grupo=>grupo.classList.remove("selected"));renderInspector(atual());}});
 function criarSvg(tag,attrs,parent){const el=document.createElementNS("http://www.w3.org/2000/svg",tag);Object.entries(attrs||{}).forEach(([k,v])=>el.setAttribute(k,v));(parent||svg).appendChild(el);return el}
 function render(){
