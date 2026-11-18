@@ -142,6 +142,10 @@
       if (a.de === a.para) erros.push("Aresta " + a.id + " não pode conectar um nó a ele mesmo.");
       if (typeof a.tipo !== "string" || !tiposAresta.has(a.tipo)) erros.push("Tipo de aresta inválido: " + a.tipo);
       texto(a.rotulo, "Rótulo da aresta " + a.id, erros, 300);
+      if (a.pontos !== undefined && a.pontos !== null) {
+        const lados = new Set(["esquerda", "direita", "cima", "baixo"]);
+        if (!objeto(a.pontos) || !lados.has(a.pontos.de) || !lados.has(a.pontos.para)) erros.push("Pontos de conexão inválidos na aresta " + a.id + ".");
+      }
       const chave = JSON.stringify([a.de, a.para, a.tipo]);
       if (pares.has(chave)) erros.push("Relação duplicada entre " + a.de + " e " + a.para + ".");
       pares.add(chave);
