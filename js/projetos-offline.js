@@ -5,7 +5,7 @@ const KEY="escolio-projetos-v1",PREFIX="escolio-projeto-dados-", $=s=>document.q
 let catalog={schema:1,projects:[]},activeId=null;
 function readCatalog(){try{const x=JSON.parse(localStorage.getItem(KEY));if(x&&x.schema===1&&Array.isArray(x.projects))catalog=x}catch(_){catalog={schema:1,projects:[]}}}
 function writeCatalog(){localStorage.setItem(KEY,JSON.stringify(catalog))}
-function snapshot(){return {mapa:clone(Escolio.nucleo.estado.obterProjeto()),planos:EscolioPlanos?.exportar()||null,escolios:EscolioEscolios?.exportar()||null,imagens:EscolioImagens?.exportar()||[]}}
+function snapshot(){return {mapa:clone(Escolio.nucleo.estado.obterProjeto()),planos:EscolioPlanos?.exportar()||null,escolios:EscolioEscolios?.exportar()||null,imagens:EscolioImagens?.exportar()||[],ciencias:EscolioCiencias?.exportar()||null}}
 function store(id,data){localStorage.setItem(PREFIX+id,JSON.stringify(data))}
 function load(id){try{return JSON.parse(localStorage.getItem(PREFIX+id))}catch(_){return null}}
 function saveCurrent(){if(!activeId)return;try{const p=catalog.projects.find(x=>x.id===activeId);if(!p)return;store(activeId,snapshot());p.updatedAt=now();writeCatalog()}catch(e){console.warn("Falha ao salvar o projeto:",e)}}
