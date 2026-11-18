@@ -382,3 +382,112 @@ img, svg, video, canvas {
     transition-duration: .01ms !important;
   }
 }
+
+
+/* Rolagem explícita da Central de Configurações e da biblioteca de temas. */
+html, body {
+  min-height: 100%;
+}
+body {
+  overflow: hidden;
+}
+.home-screen {
+  height: 100vh;
+  height: 100dvh;
+  min-height: 0;
+  overflow: hidden;
+}
+.home-main {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-x: hidden;
+  overflow-y: auto;
+  overscroll-behavior-y: contain;
+  scrollbar-width: auto;
+  scrollbar-color: var(--accent, #7896bd) var(--panel, #2d2d2d);
+}
+.home-settings-view {
+  min-height: min-content;
+  padding-bottom: 28px;
+}
+.theme-center {
+  min-width: 0;
+  align-items: stretch;
+}
+.theme-library-panel,
+.theme-editor-panel {
+  min-width: 0;
+  min-height: 0;
+}
+.theme-library {
+  min-height: 120px;
+  max-height: min(52vh, 520px);
+  overflow-x: hidden;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: auto;
+  scrollbar-color: var(--accent, #7896bd) var(--panel2, #383838);
+}
+.theme-editor-panel {
+  display: flex;
+  flex-direction: column;
+  max-height: min(76vh, 780px);
+}
+.theme-editor-fields {
+  min-height: 100px;
+  max-height: none;
+  flex: 1 1 auto;
+  overflow-x: hidden;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: auto;
+  scrollbar-color: var(--accent, #7896bd) var(--panel2, #383838);
+}
+.home-main::-webkit-scrollbar,
+.theme-library::-webkit-scrollbar,
+.theme-editor-fields::-webkit-scrollbar {
+  width: 10px;
+}
+.home-main::-webkit-scrollbar-track,
+.theme-library::-webkit-scrollbar-track,
+.theme-editor-fields::-webkit-scrollbar-track {
+  background: var(--panel, #2d2d2d);
+}
+.home-main::-webkit-scrollbar-thumb,
+.theme-library::-webkit-scrollbar-thumb,
+.theme-editor-fields::-webkit-scrollbar-thumb {
+  background: var(--accent, #7896bd);
+  border: 2px solid var(--panel, #2d2d2d);
+  border-radius: 8px;
+}
+.home-main::-webkit-scrollbar-thumb:hover,
+.theme-library::-webkit-scrollbar-thumb:hover,
+.theme-editor-fields::-webkit-scrollbar-thumb:hover {
+  background: var(--focus, #9bb9df);
+}
+@media (max-width: 1000px) {
+  .theme-editor-panel {
+    max-height: none;
+  }
+  .theme-editor-fields {
+    max-height: 58vh;
+    flex: 0 1 auto;
+  }
+}
+@media (max-width: 600px) {
+  .home-screen {
+    height: 100dvh;
+    min-height: 0;
+  }
+  .home-main {
+    min-height: 0;
+    overflow-y: auto;
+    padding-bottom: max(28px, env(safe-area-inset-bottom, 0px));
+  }
+  .theme-library {
+    max-height: 44dvh;
+  }
+  .theme-editor-fields {
+    max-height: 52dvh;
+  }
+}
