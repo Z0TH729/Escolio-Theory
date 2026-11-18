@@ -105,10 +105,22 @@
 .diagram-shape-description p{font-size:11px;line-height:1.5;color:var(--muted);margin:5px 0}
 .diagram-shape-add{width:100%;margin-top:7px}
 
-/* Bloco matemático nativo do mapa */
-.formula-node-foreign{overflow:visible}.formula-node{height:100%;width:100%;overflow:auto;background:#151e2b;border:1px solid #536b8b;border-radius:12px;padding:12px;color:var(--text);font-family:Inter,system-ui,sans-serif;user-select:text;pointer-events:auto}.formula-node-head{display:flex;justify-content:space-between;align-items:center;padding:0 0 9px;border-bottom:1px solid var(--line);margin-bottom:9px}.formula-node-head strong{font-size:13px}.formula-node-head span{font-size:9px;letter-spacing:1px;color:var(--muted)}.formula-components{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:8px}.formula-component{min-width:0;background:#101720;border:1px solid #2c394a;border-radius:8px;padding:9px}.formula-component-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:7px}.formula-component-head b{font-size:10px}.formula-move{display:flex;gap:3px}.formula-move button{padding:2px 6px;font-size:10px}.formula-expression,.formula-command{width:100%;min-width:0;background:#0c131c;color:var(--text);border:1px solid var(--line);border-radius:6px;padding:7px;font-size:11px}.formula-vars{display:flex;flex-wrap:wrap;gap:6px;margin-top:7px}.formula-vars label{display:grid;gap:3px;color:var(--muted);font-size:9px}.formula-vars input{width:66px;background:#0c131c;color:var(--text);border:1px solid var(--line);border-radius:5px;padding:5px;font-size:10px}.formula-result{display:block;margin-top:8px;color:#bcd2f0;font-size:10px;overflow-wrap:anywhere}.formula-plot svg{width:100%;height:110px;background:#0c131c;border-radius:5px}.formula-axis{stroke:#53647b;stroke-width:1}.formula-curve{fill:none;stroke:#8fb4e8;stroke-width:2}.formula-add-row{display:flex;gap:6px;margin-top:9px}.formula-add-row button{font-size:10px;padding:7px}.formula-command{flex:1;min-width:70px}
-.node.selected .formula-node{outline:2px solid #8fb4e8}
 
-.formula-picker{flex:1;min-width:120px;background:#101720;color:var(--text);border:1px solid var(--line);border-radius:6px;padding:7px;font-size:10px}
-
-.formula-values-table{width:100%;border-collapse:collapse;margin-top:7px;font-size:10px}.formula-values-table th,.formula-values-table td{padding:4px 7px;border-bottom:1px solid var(--line);text-align:right}.formula-values-table th:first-child,.formula-values-table td:first-child{text-align:left}.formula-values-table th{color:var(--muted);font-weight:600}
+/* Quadros nativos de fórmulas e código */
+.formula-plain-foreign,.code-node-foreign{overflow:visible}
+.formula-plain{width:100%;height:100%;background:#151e2b;border:1px solid #536b8b;border-radius:10px;overflow:hidden;padding:14px;box-sizing:border-box}
+.formula-plain textarea{width:100%;height:100%;resize:none;border:0;outline:0;background:transparent;color:#e8edf4;font:16px/1.7 ui-monospace,SFMono-Regular,Consolas,monospace;white-space:pre-wrap;overflow:auto}
+.node.selected .formula-plain{outline:2px solid #8fb4e8}
+.code-node{width:100%;height:100%;display:flex;flex-direction:column;overflow:hidden;background:#090d12;border:1px solid #293646;border-radius:10px;color:#d7e0ec;box-sizing:border-box;box-shadow:0 8px 24px #0005}
+.code-node-head{height:30px;flex:0 0 30px;display:flex;align-items:center;padding:0 12px;background:#111821;border-bottom:1px solid #263342}
+.code-node-language{font:10px/1 ui-monospace,SFMono-Regular,Consolas,monospace;color:#8da4c0;text-transform:lowercase}
+.code-editor{display:flex;flex:1;min-height:0;overflow:hidden;background:#090d12}
+.code-gutter{flex:0 0 42px;margin:0;padding:12px 9px 12px 0;overflow:hidden;text-align:right;background:#0d131b;color:#53647b;border-right:1px solid #202b38;font:12px/1.65 ui-monospace,SFMono-Regular,Consolas,monospace;user-select:none}
+.code-surface{position:relative;flex:1;min-width:0;overflow:hidden}
+.code-highlight,.code-input{position:absolute;inset:0;width:100%;height:100%;margin:0;padding:12px 14px;border:0;white-space:pre;tab-size:4;font:12px/1.65 ui-monospace,SFMono-Regular,Consolas,monospace;letter-spacing:normal;overflow:auto;box-sizing:border-box}
+.code-highlight{pointer-events:none;color:#d7e0ec;background:transparent}
+.code-highlight code{font:inherit}
+.code-input{resize:none;outline:0;background:transparent;color:transparent;-webkit-text-fill-color:transparent;caret-color:#f0f4fa;overflow:auto}
+.code-input::selection{background:#526d9180}
+.tok-keyword{color:#c792ea}.tok-string{color:#c3e88d}.tok-comment{color:#718096;font-style:italic}.tok-number{color:#f78c6c}.tok-function{color:#82aaff}.tok-variable{color:#f0c674}.tok-operator{color:#89ddff}
+.node.selected .code-node{outline:2px solid #8fb4e8}
