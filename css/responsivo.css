@@ -1,0 +1,493 @@
+/* Escólio Theory · comportamento responsivo para desktop, tablet e Android */
+
+/* Evita larguras artificiais e respeita as áreas seguras de celulares. */
+html {
+  width: 100%;
+  min-width: 0;
+  min-height: 100%;
+  -webkit-text-size-adjust: 100%;
+}
+body {
+  min-width: 320px;
+  min-height: 100vh;
+  min-height: 100dvh;
+}
+button, input, textarea, select {
+  max-width: 100%;
+}
+img, svg, video, canvas {
+  max-width: 100%;
+}
+
+/* Desktop compacto e notebooks. */
+@media (max-width: 1100px) {
+  .workspace {
+    grid-template-columns: minmax(190px, 220px) minmax(0, 1fr) minmax(230px, 270px);
+  }
+  .topbar {
+    gap: 10px;
+    padding-inline: 12px;
+  }
+  .brand {
+    min-width: 170px;
+  }
+  .toolbar {
+    flex-wrap: wrap;
+    justify-content: flex-end;
+  }
+  .canvas-tools {
+    max-width: calc(100% - 28px);
+    flex-wrap: wrap;
+    justify-content: flex-end;
+  }
+}
+
+/* Tablets e celulares em orientação horizontal. */
+@media (max-width: 900px) {
+  .app {
+    min-height: 100dvh;
+    height: auto;
+    grid-template-rows: auto 1fr;
+  }
+  .topbar {
+    min-height: 56px;
+    height: auto;
+    flex-wrap: wrap;
+    padding: 9px 12px;
+  }
+  .topbar .brand {
+    flex: 0 1 auto;
+    min-width: 0;
+  }
+  .project-name {
+    flex: 1 1 180px;
+    min-width: 0;
+    flex-wrap: wrap;
+    gap: 7px;
+  }
+  .toolbar {
+    flex: 1 1 100%;
+    justify-content: flex-start;
+  }
+  .workspace {
+    min-height: 0;
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: auto minmax(55dvh, 1fr) auto;
+  }
+  .left {
+    display: flex;
+    max-height: 34dvh;
+    min-height: 0;
+    overflow: auto;
+    border-right: 0;
+    border-bottom: 1px solid var(--line);
+    padding: 10px 12px;
+  }
+  .navigation {
+    display: flex;
+    overflow-x: auto;
+    gap: 5px;
+    padding-bottom: 4px;
+    scrollbar-width: thin;
+  }
+  .nav-item {
+    width: auto;
+    flex: 0 0 auto;
+    white-space: nowrap;
+  }
+  .project-tree {
+    max-height: 15dvh;
+  }
+  .sidebar-actions {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .left .stat {
+    margin-top: 8px;
+  }
+  .canvas-wrap {
+    min-height: 55dvh;
+  }
+  .map {
+    min-height: 55dvh;
+  }
+  .right {
+    min-height: 220px;
+    max-height: 44dvh;
+    overflow: auto;
+    border-left: 0;
+    border-top: 1px solid var(--line);
+  }
+  .panel-tabs {
+    position: sticky;
+    top: 0;
+  }
+  .panel-content {
+    max-height: none;
+  }
+}
+
+/* Android e celulares estreitos. */
+@media (max-width: 600px) {
+  body {
+    overflow-x: hidden;
+    overflow-y: auto;
+  }
+  .topbar {
+    align-items: flex-start;
+    gap: 8px;
+    padding: 10px;
+  }
+  .topbar .brand strong,
+  .home-topbar .brand strong {
+    font-size: 12px;
+  }
+  .topbar .brand small,
+  .home-topbar .brand small {
+    font-size: 9px;
+  }
+  .project-name {
+    flex-basis: 100%;
+    font-size: 11px;
+  }
+  .toolbar {
+    display: flex;
+    width: 100%;
+    gap: 5px;
+  }
+  .toolbar button,
+  .canvas-tools button {
+    min-height: 38px;
+    padding: 8px 10px;
+    font-size: 11px;
+  }
+  .workspace {
+    grid-template-rows: auto minmax(58dvh, 68dvh) auto;
+  }
+  .left {
+    max-height: 31dvh;
+    padding: 8px;
+    gap: 5px;
+  }
+  .section-label {
+    margin: 4px 0 6px;
+  }
+  .navigation {
+    margin-inline: -2px;
+  }
+  .nav-item {
+    min-height: 38px;
+    padding: 8px 10px;
+    font-size: 11px;
+  }
+  .project-tree {
+    max-height: 12dvh;
+  }
+  .sidebar-actions {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 4px;
+  }
+  .sidebar-actions .action {
+    min-height: 38px;
+    padding: 7px;
+    font-size: 10px;
+  }
+  .left .stat,
+  .footer-note {
+    display: none;
+  }
+  .canvas-wrap {
+    min-height: 58dvh;
+  }
+  .canvas-head {
+    top: 8px;
+    left: 8px;
+    padding: 7px 9px;
+  }
+  .canvas-tools {
+    top: 8px;
+    right: 8px;
+    left: auto;
+    max-width: 68%;
+    gap: 4px;
+  }
+  .canvas-tools button {
+    min-height: 34px;
+    padding: 6px 8px;
+  }
+  .diagram-tools {
+    max-width: 100%;
+  }
+  .map {
+    width: 100%;
+    height: 100%;
+    min-height: 58dvh;
+  }
+  .status {
+    left: 8px;
+    bottom: 8px;
+    max-width: calc(100% - 16px);
+    font-size: 9px;
+  }
+  .right {
+    max-height: none;
+    min-height: 0;
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+  .panel-tabs {
+    padding-inline: 5px;
+  }
+  .panel-tab {
+    min-height: 42px;
+    font-size: 10px;
+  }
+  .panel-content {
+    padding: 12px;
+  }
+  .home-topbar {
+    min-height: 58px;
+    height: auto;
+    flex-wrap: wrap;
+    gap: 8px 14px;
+    padding: 10px 14px;
+  }
+  .home-topbar .brand {
+    min-width: 0;
+  }
+  .home-nav {
+    height: 38px;
+    gap: 16px;
+  }
+  .home-nav button {
+    min-height: 38px;
+    font-size: 11px;
+  }
+  .home-main {
+    width: calc(100% - 28px);
+    padding: 28px 0 36px;
+  }
+  .home-welcome h1 {
+    font-size: clamp(21px, 6vw, 27px);
+  }
+  .home-actions {
+    grid-template-columns: minmax(0, 1fr);
+    margin-bottom: 32px;
+  }
+  .home-action {
+    min-height: 82px;
+    padding: 13px;
+  }
+  .home-section-head {
+    align-items: flex-start;
+    gap: 10px;
+  }
+  .recent-project {
+    align-items: flex-start;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+  .recent-project-actions {
+    width: 100%;
+  }
+  .recent-project-actions button {
+    min-height: 38px;
+  }
+  .home-footer {
+    padding: 12px 14px;
+    padding-bottom: max(12px, env(safe-area-inset-bottom, 0px));
+    flex-wrap: wrap;
+    gap: 7px 14px;
+  }
+  .theme-center {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .theme-toolbar,
+  .theme-filters,
+  .theme-editor-actions {
+    flex-wrap: wrap;
+  }
+  .theme-toolbar input[type="search"] {
+    flex: 1 1 100%;
+    min-width: 0;
+  }
+  .theme-library {
+    grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+  }
+  .pt-shell,
+  .es-shell,
+  .fc-shell {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .pt-left,
+  .pt-right,
+  .pt-resizer,
+  .es-left,
+  .es-right,
+  .es-resizer,
+  .fc-left,
+  .fc-right {
+    min-width: 0;
+  }
+  .pt-top,
+  .es-top,
+  .fc-top {
+    padding: 12px;
+    flex-wrap: wrap;
+    gap: 9px;
+  }
+  .pt-top-actions,
+  .es-actions,
+  .fc-actions {
+    flex-wrap: wrap;
+  }
+  .pt-editor,
+  .es-content,
+  .fc-editor {
+    width: 100%;
+    max-width: 100%;
+    padding: 14px 12px 36px;
+  }
+  .pt-meta,
+  .fc-two {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .es-metrics {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .es-title {
+    font-size: 21px;
+  }
+  .es-editor,
+  .es-preview {
+    min-height: 55dvh;
+  }
+  .image-library-overlay {
+    padding: 8px;
+  }
+  .image-library-modal {
+    width: 100%;
+    max-height: 94dvh;
+    padding: 12px;
+  }
+  input, select, textarea {
+    font-size: 16px;
+  }
+}
+
+/* Acessibilidade: respeita a preferência do sistema por menos movimento. */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    scroll-behavior: auto !important;
+    animation-duration: .01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: .01ms !important;
+  }
+}
+
+
+/* Rolagem explícita da Central de Configurações e da biblioteca de temas. */
+html, body {
+  min-height: 100%;
+}
+body {
+  overflow: hidden;
+}
+.home-screen {
+  height: 100vh;
+  height: 100dvh;
+  min-height: 0;
+  overflow: hidden;
+}
+.home-main {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-x: hidden;
+  overflow-y: auto;
+  overscroll-behavior-y: contain;
+  scrollbar-width: auto;
+  scrollbar-color: var(--accent, #7896bd) var(--panel, #2d2d2d);
+}
+.home-settings-view {
+  min-height: min-content;
+  padding-bottom: 28px;
+}
+.theme-center {
+  min-width: 0;
+  align-items: stretch;
+}
+.theme-library-panel,
+.theme-editor-panel {
+  min-width: 0;
+  min-height: 0;
+}
+.theme-library {
+  min-height: 120px;
+  max-height: min(52vh, 520px);
+  overflow-x: hidden;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: auto;
+  scrollbar-color: var(--accent, #7896bd) var(--panel2, #383838);
+}
+.theme-editor-panel {
+  display: flex;
+  flex-direction: column;
+  max-height: min(76vh, 780px);
+}
+.theme-editor-fields {
+  min-height: 100px;
+  max-height: none;
+  flex: 1 1 auto;
+  overflow-x: hidden;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: auto;
+  scrollbar-color: var(--accent, #7896bd) var(--panel2, #383838);
+}
+.home-main::-webkit-scrollbar,
+.theme-library::-webkit-scrollbar,
+.theme-editor-fields::-webkit-scrollbar {
+  width: 10px;
+}
+.home-main::-webkit-scrollbar-track,
+.theme-library::-webkit-scrollbar-track,
+.theme-editor-fields::-webkit-scrollbar-track {
+  background: var(--panel, #2d2d2d);
+}
+.home-main::-webkit-scrollbar-thumb,
+.theme-library::-webkit-scrollbar-thumb,
+.theme-editor-fields::-webkit-scrollbar-thumb {
+  background: var(--accent, #7896bd);
+  border: 2px solid var(--panel, #2d2d2d);
+  border-radius: 8px;
+}
+.home-main::-webkit-scrollbar-thumb:hover,
+.theme-library::-webkit-scrollbar-thumb:hover,
+.theme-editor-fields::-webkit-scrollbar-thumb:hover {
+  background: var(--focus, #9bb9df);
+}
+@media (max-width: 1000px) {
+  .theme-editor-panel {
+    max-height: none;
+  }
+  .theme-editor-fields {
+    max-height: 58vh;
+    flex: 0 1 auto;
+  }
+}
+@media (max-width: 600px) {
+  .home-screen {
+    height: 100dvh;
+    min-height: 0;
+  }
+  .home-main {
+    min-height: 0;
+    overflow-y: auto;
+    padding-bottom: max(28px, env(safe-area-inset-bottom, 0px));
+  }
+  .theme-library {
+    max-height: 44dvh;
+  }
+  .theme-editor-fields {
+    max-height: 52dvh;
+  }
+}
