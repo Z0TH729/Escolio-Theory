@@ -84,9 +84,9 @@
       const no = p.nos.find(n => n.id === identificador);
       if (!no) throw new Error("Nó não encontrado.");
       if (!dados || typeof dados !== "object" || Array.isArray(dados)) throw new TypeError("Dados do nó inválidos.");
-      ["tipo", "titulo", "corpo", "campos", "pos", "estilo", "pastaId"].forEach(chave => {
+      ["tipo", "titulo", "corpo", "campos", "pos", "estilo", "pastaId", "dimensoes", "ancoras"].forEach(chave => {
         if (Object.prototype.hasOwnProperty.call(dados, chave)) {
-          if (chave === "pos" || chave === "estilo") no[chave] = Object.assign({}, no[chave], dados[chave]);
+          if (chave === "pos" || chave === "estilo" || chave === "dimensoes" || chave === "ancoras") no[chave] = Object.assign({}, no[chave] || {}, dados[chave]);
           else no[chave] = E.nucleo.modelo.clonar(dados[chave]);
         }
       });
