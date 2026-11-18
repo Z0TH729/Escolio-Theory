@@ -49,7 +49,16 @@
   };
   modelo.criarAresta = function (de, para, dados) {
     dados = dados || {};
-    return { id: dados.id || id("aresta"), de: de, para: para, rotulo: typeof dados.rotulo === "string" ? dados.rotulo : "", modo: dados.modo === "proposicao" ? "proposicao" : "livre", tipo: dados.tipo || "relacao", pontos: dados.pontos ? modelo.clonar(dados.pontos) : null };
+    return {
+      id: dados.id || id("aresta"), de: de, para: para,
+      rotulo: typeof dados.rotulo === "string" ? dados.rotulo : "",
+      modo: dados.modo === "proposicao" ? "proposicao" : "livre",
+      tipo: dados.tipo || "relacao",
+      pontos: dados.pontos ? modelo.clonar(dados.pontos) : null,
+      cor: dados.cor || null,
+      estilo: Object.assign({ geometria: "reta", tracado: "continuo", extremidadeInicial: "nenhuma", extremidadeFinal: "nenhuma", cor: null, espessura: 2, opacidade: 1 }, modelo.clonar(dados.estilo || {})),
+      curvatura: Object.assign({ modo: "automatico", arqueamento: 48, controle1: null, controle2: null, pontos: [] }, modelo.clonar(dados.curvatura || {}))
+    };
   };
   modelo.criarEscolio = function (alvo, texto, tipo, dados) {
     dados = dados || {};
