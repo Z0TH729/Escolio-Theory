@@ -49,9 +49,9 @@ function finalizarArraste(ev,cancelado){
   const inicio=conexao,ponto=pontoNoMapa(ev);conexao=null;
   if(linhaTemporaria){linhaTemporaria.remove();linhaTemporaria=null;}
   if(!ponto)return;
-  const candidatos=atual().nos.filter(x=>x.id!==inicio.id).map(x=>({no:x,centro:pos(x)})).map(x=>({...x,distancia:Math.hypot(x.centro.x-ponto.x,x.centro.y-ponto.y)})).sort((a,b)=>a.distancia-b.distancia);
+  const candidatos=atual().nos.filter(x=>x.id!==inicio.id).flatMap(no=>{const c=pos(no);return [[c.x-94,c.y],[c.x+94,c.y],[c.x,c.y-35],[c.x,c.y+35]].map(([x,y])=>({no,distancia:Math.hypot(x-ponto.x,y-ponto.y)}));}).sort((a,b)=>a.distancia-b.distancia);
   const alvo=candidatos[0];
-  if(!alvo||alvo.distancia>110){aviso("Solte sobre outro conceito para conectar.");return;}
+  if(!alvo||alvo.distancia>16){aviso("Solte exatamente sobre um ponto de conexão.");return;}
   try{E.nucleo.estado.adicionarAresta(inicio.id,alvo.no.id,{rotulo:"relaciona"});selecionado=alvo.no.id;render();aviso("Conexão criada.");}catch(err){aviso(err.message);}
   return;
  }
