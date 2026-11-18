@@ -41,12 +41,13 @@ function atualizarArestas(){
  });
 }
 function iniciarArraste(ev,id,n){
- if(ev.button!==0||ev.target.classList.contains('connection-port'))return;
+ if(ev.button!==0||ev.target.classList.contains('connection-port')||ev.target.classList.contains('text-resize-handle')||ev.target.closest('foreignObject'))return;
  const ponto=pontoNoMapa(ev);if(!ponto)return;
  arraste={id,no:n,grupo:gruposNos.get(id),inicio:ponto,pos:pos(n),original:{x:n.pos.x,y:n.pos.y},moveu:false};
  ev.currentTarget.setPointerCapture(ev.pointerId);
 }
 window.addEventListener("pointermove",ev=>{
+ if(redimensionamento){const p=pontoNoMapa(ev);if(!p)return;const dx=p.x-redimensionamento.inicio.x,dy=p.y-redimensionamento.inicio.y;redimensionamento.largura=Math.max(120,Math.min(1200,redimensionamento.original.largura+dx));redimensionamento.altura=Math.max(48,Math.min(1600,redimensionamento.original.altura+dy));const fo=redimensionamento.grupo.querySelector("foreignObject"),fr=redimensionamento.grupo.querySelector(".text-node-frame");if(fo){fo.setAttribute("x",-redimensionamento.largura/2);fo.setAttribute("width",redimensionamento.largura);fo.setAttribute("height",redimensionamento.altura);}if(fr){fr.setAttribute("x",-redimensionamento.largura/2);fr.setAttribute("y",-redimensionamento.altura/2);fr.setAttribute("width",redimensionamento.largura);fr.setAttribute("height",redimensionamento.altura);}atualizarArestas();return;}
  if(conexao){if(ev.pointerId!==conexao.pointerId)return;const p=pontoNoMapa(ev);if(p&&linhaTemporaria){linhaTemporaria.setAttribute("x2",p.x);linhaTemporaria.setAttribute("y2",p.y);}return;}
  if(!arraste)return;
  const ponto=pontoNoMapa(ev);if(!ponto)return;
@@ -57,6 +58,7 @@ window.addEventListener("pointermove",ev=>{
  atualizarArestas();
 });
 function finalizarArraste(ev,cancelado){
+ if(redimensionamento){const r=redimensionamento;redimensionamento=null;if(!cancelado){try{E.nucleo.estado.atualizarNo(r.id,{dimensoes:{largura:Math.round(r.largura),altura:Math.round(r.altura),modoAltura:"manual"}})}catch(e){aviso(e.message)}}else render();return;}
  if(conexao){
   if(ev.pointerId!==conexao.pointerId)return;
   const inicio=conexao,ponto=pontoNoMapa(ev);conexao=null;
