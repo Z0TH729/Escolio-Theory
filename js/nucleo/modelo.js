@@ -33,7 +33,7 @@
   modelo.criarNo = function (dados) {
     dados = dados || {};
     const tipo = dados.tipo || "conceito";
-    const estiloPadrao = tipo === "texto" ? { cor: "#e8edf4", fundo: "transparent", contorno: "none", tamanhoFonte: 14, familiaFonte: null } : { cor: "#2b4c7e" };
+    const estiloPadrao = tipo === "imagem" ? { cor: "#e8edf4", fundo: "transparent", contorno: "none" } : tipo === "texto" ? { cor: "#e8edf4", fundo: "transparent", contorno: "none", tamanhoFonte: 14, familiaFonte: null } : { cor: "#2b4c7e" };
     return {
       id: dados.id || id("no"),
       tipo: tipo,
@@ -43,8 +43,8 @@
       pastaId: dados.pastaId || null,
       pos: { x: Number(dados.pos && dados.pos.x) || 0, y: Number(dados.pos && dados.pos.y) || 0 },
       estilo: Object.assign(estiloPadrao, modelo.clonar(dados.estilo || {})),
-      dimensoes: tipo === "texto" ? Object.assign({ largura: 280, altura: null, modoAltura: "auto" }, modelo.clonar(dados.dimensoes || {})) : undefined,
-      ancoras: tipo === "texto" ? Object.assign({ esquerda: true, direita: true, cima: true, baixo: true }, modelo.clonar(dados.ancoras || {})) : undefined
+      dimensoes: (tipo === "texto" || tipo === "imagem") ? Object.assign(tipo === "imagem" ? { largura: 300, altura: 230, modoAltura: "manual" } : { largura: 280, altura: null, modoAltura: "auto" }, modelo.clonar(dados.dimensoes || {})) : undefined,
+      ancoras: (tipo === "texto" || tipo === "imagem") ? Object.assign({ esquerda: true, direita: true, cima: true, baixo: true }, modelo.clonar(dados.ancoras || {})) : undefined
     };
   };
   modelo.criarAresta = function (de, para, dados) {

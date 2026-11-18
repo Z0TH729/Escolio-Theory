@@ -67,7 +67,8 @@
     const chosen=selected.has(b.id),indent=b.parentId?24:0,content=esc(b.content);
     let body;
     if(b.type==="heading")body='<input class="pt-heading-input" data-content value="'+content+'" placeholder="Título da seção">';
-    else if(["map","diagram","image"].includes(b.type))body='<textarea data-content placeholder="'+esc(blockNames[b.type])+' · descreva ou informe o identificador do material">'+content+'</textarea><small class="pt-muted">Vínculo local/manual. Não carrega conteúdo externo automaticamente.</small>';
+    else if(b.type==="image"){const src=b.content&&b.content.startsWith("data:image/")?b.content:"";body='<label class="pt-image-import">Importar imagem<input type="file" data-image-file accept="image/*"></label>'+(src?'<img class="pt-image-preview" src="'+src+'" alt="Imagem do plano">':'<p class="pt-muted">Nenhuma imagem importada.</p>')+'<input data-image-caption placeholder="Legenda" value="'+esc(b.metadata&&b.metadata.caption||"")+'">';}
+    else if(["map","diagram"].includes(b.type))body='<textarea data-content placeholder="'+esc(blockNames[b.type])+'">'+content+'</textarea>';
     else if(b.type==="reference")body='<textarea data-content placeholder="Anote a referência ou selecione uma fonte no painel Referências">'+content+'</textarea>';
     else body='<textarea data-content placeholder="'+esc(blockNames[b.type])+'">'+content+'</textarea>';
     const ref=b.referenceId?db.references.find(r=>r.id===b.referenceId):null;
@@ -77,9 +78,12 @@
     const id=el.dataset.block,b=plan().blocks.find(x=>x.id===id);
     el.addEventListener("click",e=>{if(e.target.closest("textarea,input,button"))return;if(e.ctrlKey||e.metaKey){selected.has(id)?selected.delete(id):selected.add(id)}else{selected.clear();selected.add(id)}renderEditor();renderInspector()});
     const field=el.querySelector("[data-content]");
+    if(!field){const imageFile=el.querySelector("[data-image-file]");if(imageFile)imageFile.onchange=async ev=>{const f=ev.target.files[0];if(!f)return;try{const a=await window.EscolioImagens.importarArquivo(f);b.content=a.data;changed();renderEditor()}catch(err){alert(err.message)}};const caption=el.querySelector("[data-image-caption]");if(caption)caption.onchange=ev=>{b.metadata=b.metadata||{};b.metadata.caption=ev.target.value;changed()};}
+    if(field){
     field.addEventListener("focus",()=>{selected.clear();selected.add(id);renderInspector()});
     field.addEventListener("input",e=>{b.content=e.target.value;plan().updatedAt=now();changed()});
     field.addEventListener("keydown",e=>{if(e.key==="/"&&e.target.selectionStart===0&&e.target.value===""){e.preventDefault();insertMenu(id)}if(e.key==="Escape")e.target.blur()});
+    }
     el.querySelectorAll("[data-action]").forEach(x=>x.onclick=()=>blockAction(x.dataset.action,x.dataset.id));
   }
   function insertMenu(afterId){
@@ -178,7 +182,7 @@
     else if(f==="imprimir"){const w=window.open("","_blank");if(!w){alert("Permita a abertura da janela para imprimir em PDF.");return}w.document.write("<!doctype html><meta charset='utf-8'><title>"+esc(p.title)+"</title><h1>"+esc(p.title)+"</h1>"+p.blocks.map(b=>"<section><h2>"+esc(blockNames[b.type])+"</h2><p>"+esc(b.content).replace(/\n/g,"<br>")+"</p></section>").join(""));w.document.close();w.print()}
     else alert("Formato não reconhecido.");
   }
-  function toMarkdown(p){return "# "+p.title+"\n\n"+(p.description||"")+"\n\n"+p.blocks.map(b=>(b.type==="heading"?"## ": "### "+blockNames[b.type]+"\n\n")+b.content).join("\n\n")+"\n\n## Referências\n"+db.references.map(r=>formatReference(r,p.settings.citationStyle)).join("\n")}
+  function toMarkdown(p){return "# "+p.title+"\n\n"+(p.description||"")+"\n\n"+p.blocks.map(b=>b.type==="image"?(b.content?"![ "+(b.metadata&&b.metadata.caption||"Imagem")+" ]("+b.content+")":""):(b.type==="heading"?"## ": "### "+blockNames[b.type]+"\n\n")+b.content).join("\n\n")+"\n\n## Referências\n"+db.references.map(r=>formatReference(r,p.settings.citationStyle)).join("\n")}
   function toText(p){return p.title+"\n"+p.description+"\n\n"+p.blocks.map(b=>blockNames[b.type]+"\n"+b.content).join("\n\n")}
   function formatReference(r,style){if(style==="APA")return [r.author,r.year?"("+r.year+").":"",r.title+".",r.publisher].filter(Boolean).join(" ");if(style==="Chicago")return [r.author+".",r.title+".",r.publisher,r.year].filter(Boolean).join(" ");return [r.author.toUpperCase()+".",r.title+".",r.publisher,r.year].filter(Boolean).join(" ")}
   function importFile(e){const file=e.target.files[0];if(!file)return;const rd=new FileReader();rd.onload=()=>{try{const x=JSON.parse(rd.result);const p=x.schema===1&&x.plans?x.plans[0]:x;if(!p||!Array.isArray(p.blocks)||!p.title)throw Error("Arquivo de plano inválido.");p.id=uid("plano");db.plans.push(p);active=p.id;changed();render()}catch(err){alert("Não foi possível importar: "+err.message)}};rd.readAsText(file);e.target.value=""}
