@@ -52,14 +52,18 @@ function renderLibrary(){
 }
 function rgb(hex){const h=hex.replace("#","");const n=parseInt(h.length===3?h.split("").map(x=>x+x).join(""):h,16);return {r:n>>16&255,g:n>>8&255,b:n&255}}
 function hsl(hex){let {r,g,b}=rgb(hex);r/=255;g/=255;b/=255;const max=Math.max(r,g,b),min=Math.min(r,g,b);let h=0,s=0,l=(max+min)/2;if(max!==min){const d=max-min;s=l>.5?d/(2-max-min):d/(max+min);switch(max){case r:h=(g-b)/d+(g<b?6:0);break;case g:h=(b-r)/d+2;break;default:h=(r-g)/d+4}h*=60}return {h:Math.round(h),s:Math.round(s*100),l:Math.round(l*100)}}
+function hslToHex(h,s,l){s/=100;l/=100;const c=(1-Math.abs(2*l-1))*s,x=c*(1-Math.abs((h/60)%2-1)),m=l-c/2;let r=0,g=0,b=0;if(h<60){r=c;g=x}else if(h<120){r=x;g=c}else if(h<180){g=c;b=x}else if(h<240){g=x;b=c}else if(h<300){r=x;b=c}else{r=c;b=x}return "#"+[r,g,b].map(v=>Math.round((v+m)*255).toString(16).padStart(2,"0")).join("")}
 function colorRow(key){
  const row=document.createElement("div");row.className="theme-color-row";
  const label=document.createElement("label");label.textContent=labels[key]||key;label.htmlFor="theme-color-"+key;
  const picker=document.createElement("input");picker.type="color";picker.id="theme-color-"+key;picker.value=draft.tokens[key]||defaults[key]||"#777777";
  const hex=document.createElement("input");hex.type="text";hex.value=picker.value;hex.maxLength=7;hex.setAttribute("aria-label","HEX "+label.textContent);
- const rgbOut=document.createElement("small"),hslOut=document.createElement("small");
- function update(v){if(!/^#[0-9a-f]{6}$/i.test(v))return;draft.tokens[key]=v.toLowerCase();picker.value=v;hex.value=v;const c=rgb(v),s=hsl(v);rgbOut.textContent="RGB "+c.r+", "+c.g+", "+c.b;hslOut.textContent="HSL "+s.h+"°, "+s.s+"%, "+s.l+"%";apply(draft,false)}
+ const rgbOut=document.createElement("input"),hslOut=document.createElement("input");
+ rgbOut.type="text";hslOut.type="text";rgbOut.setAttribute("aria-label","RGB "+label.textContent);hslOut.setAttribute("aria-label","HSL "+label.textContent);
+ function update(v){if(!/^#[0-9a-f]{6}$/i.test(v))return;draft.tokens[key]=v.toLowerCase();picker.value=v;hex.value=v;const c=rgb(v),z=hsl(v);rgbOut.value=c.r+", "+c.g+", "+c.b;hslOut.value=z.h+", "+z.s+"%, "+z.l+"%";apply(draft,false)}
  picker.oninput=()=>update(picker.value);hex.onchange=()=>update(hex.value.trim());
+ rgbOut.onchange=()=>{const m=rgbOut.value.match(/^\s*(\d{1,3})\s*,\s*(\d{1,3})\s*,\s*(\d{1,3})\s*$/);if(m&&m.slice(1).every(n=>+n<=255))update("#"+m.slice(1).map(n=>(+n).toString(16).padStart(2,"0")).join(""))};
+ hslOut.onchange=()=>{const m=hslOut.value.match(/^\s*(\d{1,3})\s*,\s*(\d{1,3})\s*%?\s*,\s*(\d{1,3})\s*%?\s*$/);if(m&&+m[1]<=360&&+m[2]<=100&&+m[3]<=100)update(hslToHex(+m[1],+m[2],+m[3]))};
  const values=document.createElement("div");values.className="theme-color-values";values.append(hex,rgbOut,hslOut);row.append(label,picker,values);update(picker.value);return row;
 }
 function renderEditor(){
@@ -76,10 +80,10 @@ function saveCustom(){
  write();apply(draft,false);renderLibrary();global.EscolioProjetos?.salvar();alert("Tema personalizado salvo.");
 }
 function newTheme(){draft={id:"custom-"+Date.now().toString(36),nome:"Meu tema",categoria:"custom",modo:"escuro",tokens:Object.assign({},defaults,tokens(active))};apply(draft,false);renderEditor();$("#theme-name")?.focus()}
-function duplicateTheme(){if(!active)return;draft=clone(active);draft.id="custom-"+Date.now().toString(36);draft.nome=active.nome+" (cópia)";draft.categoria="custom";data.custom.push(clone(draft));write();apply(draft,false);renderLibrary();renderEditor()}
+function duplicateTheme(){if(!active)return;draft=clone(active);draft.id="custom-"+Date.now().toString(36);draft.nome=active.nome+" (cópia)";draft.categoria="custom";data.custom.push(clone(draft));write();apply(draft);renderLibrary();renderEditor()}
 function deleteTheme(){if(!active||!data.custom.some(t=>t.id===active.id))return alert("Somente temas personalizados podem ser excluídos.");if(!confirm("Excluir o tema "+active.nome+"?"))return;data.custom=data.custom.filter(t=>t.id!==active.id);data.favorites=data.favorites.filter(x=>x!==active.id);if(data.project?.id===active.id)data.project=null;draft=clone(find(data.global)||catalog[0]);write();apply(draft);renderLibrary();renderEditor()}
 function exportTheme(){if(!active)return;const blob=new Blob([JSON.stringify({format:"escolio-theme",version:1,theme:active},null,2)],{type:"application/json"}),url=URL.createObjectURL(blob),a=document.createElement("a");a.href=url;a.download=(active.nome.normalize("NFD").replace(/[\u0300-\u036f]/g,"").replace(/[^a-z0-9-_]+/gi,"-")||"tema")+".escolio-theme.json";a.click();setTimeout(()=>URL.revokeObjectURL(url),1000)}
-function importTheme(file){if(!file)return;file.text().then(s=>{const x=JSON.parse(s),t=x.theme;if(x.format!=="escolio-theme"||!t?.tokens)throw Error("Arquivo de tema inválido.");draft=clone(t);draft.id="custom-"+Date.now().toString(36);draft.categoria="custom";data.custom.push(clone(draft));write();apply(draft,false);renderLibrary();renderEditor()}).catch(e=>alert("Não foi possível importar o tema: "+e.message))}
+function importTheme(file){if(!file)return;file.text().then(s=>{const x=JSON.parse(s),t=x.theme;if(x.format!=="escolio-theme"||!t?.tokens)throw Error("Arquivo de tema inválido.");draft=clone(t);draft.id="custom-"+Date.now().toString(36);draft.categoria="custom";data.custom.push(clone(draft));write();apply(draft);renderLibrary();renderEditor()}).catch(e=>alert("Não foi possível importar o tema: "+e.message))}
 function bind(){
  document.querySelectorAll("[data-theme-filter]").forEach(b=>b.onclick=()=>{filter=b.dataset.themeFilter;document.querySelectorAll("[data-theme-filter]").forEach(x=>x.classList.toggle("active",x===b));renderLibrary()});
  $("#theme-search")?.addEventListener("input",renderLibrary);$("#theme-project-scope")?.addEventListener("change",setScope);
