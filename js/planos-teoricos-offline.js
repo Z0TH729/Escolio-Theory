@@ -70,7 +70,7 @@
     else if(b.type==="reference")body='<textarea data-content placeholder="Anote a referência ou selecione uma fonte no painel Referências">'+content+'</textarea>';
     else body='<textarea data-content placeholder="'+esc(blockNames[b.type])+'">'+content+'</textarea>';
     const ref=b.referenceId?db.references.find(r=>r.id===b.referenceId):null;
-    return '<article class="pt-block '+(chosen?"selected":"")+'" data-block="'+b.id+'" style="margin-left:'+indent+'px"><div class="pt-block-head"><button class="pt-block-grip" data-action="select" data-id="'+b.id+'" title="Selecionar bloco">⠿</button><span>'+esc(blockNames[b.type]||b.type)+'</span><div class="pt-block-actions"><button data-action="up" data-id="'+b.id+'" title="Mover para cima">↑</button><button data-action="down" data-id="'+b.id+'" title="Mover para baixo">↓</button><button data-action="indent" data-id="'+b.id+'" title="Aninhar">→</button><button data-action="duplicate" data-id="'+b.id+'" title="Duplicar">⧉</button><button data-action="delete" data-id="'+b.id+'" title="Excluir">×</button></div></div>'+body+(ref?'<small class="pt-ref-chip">Fonte: '+esc(ref.title)+'</small>':'')+'<div class="pt-block-foot"><button data-action="convert" data-id="'+b.id+'">Converter tipo</button><button data-action="link" data-id="'+b.id+'">Criar conexão</button><button data-action="reference" data-id="'+b.id+'">Associar referência</button></div></article>';
+    return '<article class="pt-block '+(chosen?"selected":"")+'" data-block="'+b.id+'" style="margin-left:'+indent+'px"><div class="pt-block-head"><button class="pt-block-grip" data-action="select" data-id="'+b.id+'" title="Selecionar bloco">⠿</button><span>'+esc(blockNames[b.type]||b.type)+'</span><div class="pt-block-actions"><button data-action="up" data-id="'+b.id+'" title="Mover para cima">↑</button><button data-action="down" data-id="'+b.id+'" title="Mover para baixo">↓</button><button data-action="indent" data-id="'+b.id+'" title="Aninhar">→</button><button data-action="duplicate" data-id="'+b.id+'" title="Duplicar">⧉</button><button data-action="delete" data-id="'+b.id+'" title="Excluir">×</button></div></div>'+body+(ref?'<small class="pt-ref-chip">Fonte: '+esc(ref.title)+'</small>':'')+'<div class="pt-block-foot"><button data-action="convert" data-id="'+b.id+'">Converter tipo</button><button data-action="link" data-id="'+b.id+'">Criar conexão</button><button data-action="reference" data-id="'+b.id+'">Associar referência</button><button data-action="citation" data-id="'+b.id+'">Inserir citação</button></div></article>';
   }
   function bindBlock(el){
     const id=el.dataset.block,b=plan().blocks.find(x=>x.id===id);
@@ -96,6 +96,7 @@
     if(action==="convert"){const type=prompt("Novo tipo: "+Object.keys(blockNames).join(", "),b.type);if(type&&blockNames[type])b.type=type}
     if(action==="link")createLink(id);
     if(action==="reference")chooseReference(id);
+    if(action==="citation")insertCitation(id);
     changed();renderEditor();renderInspector();
   }
   function isDescendant(b,id,blocks){let p=b.parentId;while(p){if(p===id)return true;p=blocks.find(x=>x.id===p)?.parentId}return false}
@@ -127,6 +128,19 @@
     box.querySelector(".pt-cancel").onclick=()=>box.remove();
   }
   function chooseReference(blockId){if(!db.references.length){editReference();return}const r=prompt("Digite o número da referência:\n"+db.references.map((x,i)=>(i+1)+". "+x.title).join("\n"));const n=Number(r)-1;if(db.references[n]){const b=plan().blocks.find(x=>x.id===blockId);b.referenceId=db.references[n].id;changed()}}
+  function insertCitation(blockId){
+    if(!db.references.length){editReference();return}
+    const choice=prompt("Referência (número):\\n"+db.references.map((r,i)=>(i+1)+". "+r.author+" — "+r.title).join("\\n"));
+    const ref=db.references[Number(choice)-1];if(!ref)return;
+    const mode=prompt("Tipo: autor-data | integrada | nota | direta","autor-data")||"autor-data";
+    const author=ref.author||"Autor",year=ref.year||"s.d.",page=prompt("Página (opcional):","")||"";
+    let citation;
+    if(mode==="integrada")citation="Segundo "+author+" ("+year+(page?", p. "+page:"")+"), ";
+    else if(mode==="nota")citation="[^"+(plan().blocks.filter(x=>x.type==="citation").length+1)+"]";
+    else if(mode==="direta"){const quote=prompt("Trecho da fonte (insira apenas texto que você tem autorização para usar):","");if(quote===null)return;citation="“"+quote+"” ("+author+", "+year+(page?", p. "+page:"")+")"}
+    else citation="("+author+", "+year+(page?", p. "+page:"")+")";
+    const b=plan().blocks.find(x=>x.id===blockId);b.content=(b.content?b.content+" ":"")+citation;b.referenceId=ref.id;changed();renderEditor();renderInspector();
+  }
   function createLink(blockId){
     const p=plan(),target=prompt("Identificador ou nome do material relacionado (mapa, diagrama, documento ou plano):");if(!target)return;
     const category=prompt("Categoria da conexão (fundamenta, exemplifica, contradiz, complementa, depende de, representa):","fundamenta")||"relaciona";
