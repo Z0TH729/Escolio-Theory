@@ -1,0 +1,19 @@
+/* Camada de compatibilidade dos temas. */
+:root{font-family:Inter,"Segoe UI",Roboto,Arial,sans-serif}
+html,body,.home-screen,.app,.workspace,.canvas-wrap,#planos-workspace,#escolios-workspace,#ciencias-workspace{background-color:var(--bg)!important;color:var(--text)}
+.home-topbar,.topbar,.canvas-head,.canvas-tools button,.status,.panel-tabs,.pt-top,.es-top{background-color:var(--panel)!important;color:var(--text)}
+.left,.right,.pt-left,.pt-right,.pt-inspector,.panel-content{background-color:var(--panel)!important;color:var(--text)}
+button,.home-action,.recent-project,.settings-placeholder,.diagram-shape-card,.pt-insert-card,.es-modal-card{background-color:var(--panel2);color:var(--text);border-color:var(--line)}
+button:hover,.nav-item:hover,.tree-row:hover,.tree-row.selected,.recent-project:hover{border-color:var(--accent);filter:brightness(1.05)}
+button.primary,.home-action-primary,.recent-open{background-color:var(--accent2)!important;border-color:var(--accent)!important;color:#fff!important}
+input,textarea,select,.field input,.field textarea,.field select,#inspector input,#inspector select,#inspector textarea{background-color:var(--bg)!important;color:var(--text)!important;border-color:var(--line)!important}
+h1,h2,h3,h4,strong,label,.brand strong,.project-name strong{color:var(--text)}
+small,p,.hint,.muted,.brand small,.home-welcome p,.settings-heading p,.home-section-head p{color:var(--muted)}
+.nav-item.active,.panel-tab.active,.pt-plan-item.active,.es-entry.active,.es-folder.active{background:var(--panel2)!important;border-color:var(--accent)!important}
+.canvas-wrap{background-image:radial-gradient(color-mix(in srgb,var(--muted) 38%,transparent) .7px,transparent .7px)!important}
+.node:not(.text-node) rect{fill:var(--panel2);stroke:var(--accent)}
+.node text{fill:var(--text)}
+.edge{stroke:var(--accent)}
+.edge-label{fill:var(--text);stroke:var(--bg)}
+.mark{background:linear-gradient(145deg,var(--accent),var(--accent2))!important}
+.toast{background:var(--panel2);color:var(--text);border-color:var(--accent)}
