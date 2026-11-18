@@ -4,7 +4,7 @@
 const E=window.Escolio, $=s=>document.querySelector(s);
 const svg=$("#map"), toast=$("#toast");
 let selecionado=null, origemConexao=null, projeto=E.exemplos.aprendizagemSignificativa();
-let arraste=null, bloquearCliqueAte=0, gruposNos=new Map(), elementosArestas=[];
+let arraste=null, conexao=null, linhaTemporaria=null, bloquearCliqueAte=0, gruposNos=new Map(), elementosArestas=[];
 const centro={x:600,y:380};
 function aviso(msg){toast.textContent=msg;toast.classList.add("show");clearTimeout(aviso.t);aviso.t=setTimeout(()=>toast.classList.remove("show"),2400)}
 function atual(){return E.nucleo.estado.obterProjeto()}
@@ -29,12 +29,13 @@ function atualizarArestas(){
  });
 }
 function iniciarArraste(ev,id,n){
- if(ev.button!==0||ev.shiftKey)return;
+ if(ev.button!==0||ev.target.classList.contains('connection-port'))return;
  const ponto=pontoNoMapa(ev);if(!ponto)return;
  arraste={id,no:n,grupo:gruposNos.get(id),inicio:ponto,pos:pos(n),original:{x:n.pos.x,y:n.pos.y},moveu:false};
  ev.currentTarget.setPointerCapture(ev.pointerId);
 }
 svg.addEventListener("pointermove",ev=>{
+ if(conexao){const p=pontoNoMapa(ev);if(p&&linhaTemporaria){linhaTemporaria.setAttribute("x2",p.x);linhaTemporaria.setAttribute("y2",p.y);}return;}
  if(!arraste)return;
  const ponto=pontoNoMapa(ev);if(!ponto)return;
  const dx=ponto.x-arraste.inicio.x,dy=ponto.y-arraste.inicio.y;
@@ -44,6 +45,16 @@ svg.addEventListener("pointermove",ev=>{
  atualizarArestas();
 });
 function finalizarArraste(ev,cancelado){
+ if(conexao){
+  const inicio=conexao,ponto=pontoNoMapa(ev);conexao=null;
+  if(linhaTemporaria){linhaTemporaria.remove();linhaTemporaria=null;}
+  if(!ponto)return;
+  const candidatos=atual().nos.filter(x=>x.id!==inicio.id).map(x=>({no:x,centro:pos(x)})).map(x=>({...x,distancia:Math.hypot(x.centro.x-ponto.x,x.centro.y-ponto.y)})).sort((a,b)=>a.distancia-b.distancia);
+  const alvo=candidatos[0];
+  if(!alvo||alvo.distancia>110){aviso("Solte sobre outro conceito para conectar.");return;}
+  try{E.nucleo.estado.adicionarAresta(inicio.id,alvo.no.id,{rotulo:"relaciona"});selecionado=alvo.no.id;render();aviso("Conexão criada.");}catch(err){aviso(err.message);}
+  return;
+ }
  if(!arraste)return;
  const a=arraste;arraste=null;
  if(a.moveu){
@@ -62,14 +73,16 @@ function render(){
  gruposNos=new Map();elementosArestas=[];
  const camadaA=criarSvg("g",{"aria-label":"Relações"}),camadaN=criarSvg("g",{"aria-label":"Conceitos"});
  p.arestas.forEach(a=>{const de=p.nos.find(n=>n.id===a.de),para=p.nos.find(n=>n.id===a.para);if(!de||!para)return;const d=pos(de),q=pos(para),linha=criarSvg("line",{x1:d.x,y1:d.y,x2:q.x,y2:q.y,class:"edge"},camadaA);const t=criarSvg("text",{x:(d.x+q.x)/2,y:(d.y+q.y)/2-9,class:"edge-label"},camadaA);t.textContent=a.rotulo;elementosArestas.push({dados:a,linha,rotulo:t})});
- p.nos.forEach(n=>{const xy=pos(n),g=criarSvg("g",{class:"node"+(n.id===selecionado?" selected":""),transform:"translate("+xy.x+" "+xy.y+")","data-id":n.id,role:"button","aria-label":n.titulo},camadaN);criarSvg("rect",{x:-94,y:-35,width:188,height:70,stroke:n.estilo.cor},g);const t=criarSvg("text",{x:0,y:-2},g);t.textContent=n.titulo.length>24?n.titulo.slice(0,22)+"…":n.titulo;const s=criarSvg("text",{x:0,y:18,class:"sub"},g);s.textContent=n.tipo;gruposNos.set(n.id,g);g.addEventListener("pointerdown",ev=>iniciarArraste(ev,n.id,n));g.addEventListener("click",ev=>{ev.stopPropagation();if(Date.now()<bloquearCliqueAte)return;if(ev.shiftKey){if(!origemConexao){origemConexao=n.id;selecionado=n.id;render();aviso("Origem selecionada. Shift+clique no destino.");}else if(origemConexao!==n.id){try{E.nucleo.estado.adicionarAresta(origemConexao,n.id,{rotulo:"relaciona"});origemConexao=null;selecionado=n.id;render();aviso("Relação criada.");}catch(err){aviso(err.message);}}}else{origemConexao=null;if(selecionado!==n.id){selecionado=n.id;gruposNos.forEach((grupo,id)=>grupo.classList.toggle("selected",id===n.id));renderInspector(atual());}}});
+ p.nos.forEach(n=>{const xy=pos(n),g=criarSvg("g",{class:"node"+(n.id===selecionado?" selected":""),transform:"translate("+xy.x+" "+xy.y+")","data-id":n.id,role:"button","aria-label":n.titulo},camadaN);criarSvg("rect",{x:-94,y:-35,width:188,height:70,stroke:n.estilo.cor},g);const t=criarSvg("text",{x:0,y:-2},g);t.textContent=n.titulo.length>24?n.titulo.slice(0,22)+"…":n.titulo;const s=criarSvg("text",{x:0,y:18,class:"sub"},g);s.textContent=n.tipo;
+  [[-94,0],[94,0],[0,-35],[0,35]].forEach(([x,y])=>{const porta=criarSvg("circle",{cx:x,cy:y,r:5,class:"connection-port",tabindex:"0"},g);porta.addEventListener("pointerdown",ev=>{if(ev.button!==0)return;ev.preventDefault();ev.stopPropagation();const base=pos(n);conexao={id:n.id};linhaTemporaria=criarSvg("line",{x1:base.x+x,y1:base.y+y,x2:base.x+x,y2:base.y+y,class:"edge edge-preview"},camadaA);});});
+  gruposNos.set(n.id,g);g.addEventListener("pointerdown",ev=>iniciarArraste(ev,n.id,n));g.addEventListener("click",ev=>{ev.stopPropagation();if(Date.now()<bloquearCliqueAte)return;if(selecionado!==n.id){selecionado=n.id;gruposNos.forEach((grupo,id)=>grupo.classList.toggle("selected",id===n.id));renderInspector(atual());}});
  g.addEventListener("dblclick",ev=>{ev.preventDefault();ev.stopPropagation();if(Date.now()<bloquearCliqueAte)return;selecionado=n.id;origemConexao=null;gruposNos.forEach((grupo,id)=>grupo.classList.toggle("selected",id===n.id));renderInspector(atual());$("#node-title")?.focus();$("#node-title")?.select();aviso("Edição aberta no painel de propriedades.");});});
  $("#empty").hidden=p.nos.length>0;$("#count-nodes").textContent=p.nos.length;$("#count-edges").textContent=p.arestas.length;$("#project-title").textContent=p.projeto.titulo;
  renderInspector(p);
 }
 function renderInspector(p){
  const area=$("#inspector"),n=p.nos.find(x=>x.id===selecionado);
- if(!n){area.innerHTML='<p class="hint">Selecione um elemento no mapa para editar suas propriedades. Use Shift + clique em dois elementos para criar uma relação.</p>';return}
+ if(!n){area.innerHTML='<p class="hint">Selecione um elemento no mapa para editar suas propriedades. Arraste de um ponto de conexão até outro conceito para criar uma relação.</p>';return}
  area.innerHTML='<div class="field"><label for="node-title">Título</label><input id="node-title" maxlength="500"></div><div class="field"><label for="node-type">Tipo</label><select id="node-type"><option>conceito</option><option>teoria</option><option>aplicacao</option><option>etapa</option><option>entidade</option><option>nota</option></select></div><div class="field"><label for="node-body">Descrição</label><textarea id="node-body"></textarea></div><div class="inspector-actions"><button id="add-note">Adicionar escólio</button><button id="delete-node" class="danger">Excluir elemento</button></div><p class="hint" id="note-count"></p>';
  $("#node-title").value=n.titulo;$("#node-type").value=n.tipo;$("#node-body").value=n.corpo;
  const persist=()=>{try{E.nucleo.estado.atualizarNo(n.id,{titulo:$("#node-title").value,tipo:$("#node-type").value,corpo:$("#node-body").value});}catch(e){aviso(e.message)}};
