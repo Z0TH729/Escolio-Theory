@@ -34,17 +34,17 @@ home:'<path d="m3 10 9-7 9 7v10a1 1 0 0 1-1 1h-5v-7H9v7H4a1 1 0 0 1-1-1z"/>',
 };
 function choose(label,id){
  const s=(label+" "+id).normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase();
- if(/fechar|cancelar|remover da lista|sair/.test(s))return "close";
+ if(/[×✕✖]/.test(label)||/fechar|cancelar|remover da lista|sair/.test(s))return "close";
  if(/excluir|apagar|remover|deletar/.test(s))return "trash";
  if(/duplicar|copiar/.test(s))return "copy";
- if(/desfazer/.test(s))return "undo";
- if(/refazer/.test(s))return "redo";
+ if(/[↶⟲]/.test(label)||/desfazer/.test(s))return "undo";
+ if(/[↷⟳]/.test(label)||/refazer/.test(s))return "redo";
  if(/aproximar|zoom in/.test(s))return "zoomIn";
  if(/afastar|zoom out/.test(s))return "zoomOut";
  if(/ajustar visualizacao|enquadrar|zoom reset/.test(s))return "zoomFit";
  if(/pesquisar|buscar|search/.test(s))return "search";
- if(/importar|abrir arquivo|abrir projeto|abrir/.test(s))return "upload";
- if(/exportar|baixar|download/.test(s))return "download";
+ if(/[⇧↑↗]/.test(label)||/importar|abrir arquivo|abrir projeto|abrir/.test(s))return "upload";
+ if(/[⇩↓]/.test(label)||/exportar|baixar|download/.test(s))return "download";
  if(/salvar|guardar|save/.test(s))return "save";
  if(/imagem|foto/.test(s))return "image";
  if(/conexao|vinculo|relacao|link/.test(s))return "link";
@@ -53,12 +53,12 @@ function choose(label,id){
  if(/codigo|script|terminal/.test(s))return "code";
  if(/referencia|bibliografia|fonte|citacao|plano|escolio|documento|historico/.test(s))return "book";
  if(/pasta|diretorio/.test(s))return "folder";
- if(/novo|adicionar|criar|inserir|elemento|conceito|bloco|forma|conexao/.test(s))return "plus";
+ if(/[＋+]/.test(label)||/novo|adicionar|criar|inserir|elemento|conceito|bloco|forma|conexao/.test(s))return "plus";
  if(/atualizar|recarregar/.test(s))return "refresh";
  if(/filtro|filtrar/.test(s))return "filter";
  if(/inicio|voltar/.test(s))return "home";
  if(/renomear|editar|alterar/.test(s))return "edit";
- if(/mais|acoes|opcoes|menu/.test(s))return "more";
+ if(/[⋯…]/.test(label)||/mais|acoes|opcoes|menu/.test(s))return "more";
  if(/restaurar|confirmar|aplicar|usar|selecionar|concluir/.test(s))return "check";
  return "more";
 }
@@ -67,7 +67,7 @@ function enhance(button){
  if(button.closest(".nav-item,.home-action,.panel-tab,.diagram-shape-card,.palette-swatch,.home-nav,.pt-plan-item,.pt-folder,.es-entry,.es-folder,.pt-tabs,.es-tabs,.fc-area-list,.fc-entry,.tree-row"))return;
  const label=(button.innerText||button.textContent||"").replace(/\s+/g," ").trim();
  if(!label)return;
- const icon=choose(label,button.id);
+ const icon=choose(label+" "+button.title,button.id);
  if(!button.title)button.title=label;
  if(!button.getAttribute("aria-label"))button.setAttribute("aria-label",label);
  const svg=document.createElementNS(NS,"svg");svg.setAttribute("viewBox","0 0 24 24");svg.setAttribute("width","16");svg.setAttribute("height","16");svg.setAttribute("aria-hidden","true");svg.setAttribute("focusable","false");svg.setAttribute("class","ui-icon");svg.setAttribute("fill","none");svg.setAttribute("stroke","currentColor");svg.setAttribute("stroke-width","1.7");svg.setAttribute("stroke-linecap","round");svg.setAttribute("stroke-linejoin","round");svg.innerHTML=paths[icon]||paths.more;
