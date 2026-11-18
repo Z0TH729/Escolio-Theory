@@ -44,7 +44,7 @@
 </aside>
 <section class="canvas-wrap" aria-label="Mapa conceitual">
   <div class="canvas-head"><b>Mapa conceitual</b><small>Organize ideias e relações</small></div>
-  <div class="canvas-tools"><button id="add-node-top">＋ Elemento</button><button id="add-text-top">＋ Texto livre</button><div id="diagram-tools" class="diagram-tools" hidden><select id="diagram-shape" aria-label="Forma para adicionar"><option value="retangulo">Retângulo</option><option value="arredondado">Retângulo arredondado</option><option value="elipse">Elipse</option><option value="terminador">Início / fim</option><option value="losango">Decisão</option><option value="paralelogramo">Entrada / saída</option><option value="documento">Documento</option><option value="cilindro">Banco de dados</option><option value="hexagono">Hexágono</option><option value="nuvem">Nuvem</option></select><button id="diagram-add-shape">＋ Forma</button><select id="diagram-template" aria-label="Modelo de diagrama"><option value="fluxograma">Fluxograma</option><option value="uml">UML · Classes</option><option value="arquitetura">Arquitetura</option><option value="rede">Rede</option><option value="circuito">Circuito lógico</option><option value="cientifico">Esquema científico</option></select><button id="diagram-add-template">Criar modelo</button></div><button id="clear-selection" title="Limpar seleção">Limpar seleção</button></div>
+  <div class="canvas-tools"><button id="add-node-top">＋ Elemento</button><button id="add-text-top">＋ Texto livre</button><div id="diagram-tools" class="diagram-tools" hidden><span class="diagram-tools-label">Modelos</span><select id="diagram-template" aria-label="Modelo de diagrama"><option value="fluxograma">Fluxograma</option><option value="uml">UML · Classes</option><option value="arquitetura">Arquitetura</option><option value="rede">Rede</option><option value="circuito">Circuito lógico</option><option value="cientifico">Esquema científico</option></select><button id="diagram-add-template">Criar modelo</button></div><button id="clear-selection" title="Limpar seleção">Limpar seleção</button></div>
   <svg id="map" class="map" viewBox="0 0 1200 760" role="img" aria-label="Mapa conceitual do projeto"></svg>
   <div class="empty" id="empty" hidden><div><h2>Seu espaço de conhecimento</h2><p>Comece criando um conceito ou carregue o exemplo demonstrativo. Arraste de um ponto de conexão de um conceito até o ponto de outro conceito.</p><button class="primary" onclick="document.getElementById('add-node').click()">Criar primeiro conceito</button></div></div>
   <div class="status">Arraste entre pontos dos conceitos: criar conexão · Ctrl + Z: desfazer</div>
@@ -54,6 +54,7 @@
     <button class="panel-tab active" data-panel="properties" role="tab" aria-selected="true">Propriedades</button>
     <button class="panel-tab" data-panel="tools" role="tab" aria-selected="false">Ferramentas</button>
     <button class="panel-tab" data-panel="colors" role="tab" aria-selected="false">Cores</button>
+    <button class="panel-tab" data-panel="shapes" role="tab" aria-selected="false">Formas</button>
   </div>
   <section class="panel-content active" id="panel-properties">
     <div class="section-label">Propriedades</div><h2>Inspetor de elemento</h2>
@@ -66,6 +67,13 @@
     <div class="tool-group"><h3>Histórico</h3><div class="tool-row"><button id="tool-undo">↶ Desfazer</button><button id="tool-redo">↷ Refazer</button></div></div>
     <div class="tool-group"><h3>Visualização</h3><div class="tool-row"><button id="zoom-in">＋ Aproximar</button><button id="zoom-out">− Afastar</button></div><button class="action" id="zoom-reset">Ajustar visualização</button></div>
     <p class="hint">As ações contextuais dependem do elemento selecionado.</p>
+  </section>
+  <section class="panel-content" id="panel-shapes" hidden>
+    <div class="section-label">Biblioteca de diagramas</div><h2>Formas</h2>
+    <p class="hint">Selecione uma forma para ver sua função e adicioná-la ao diagrama.</p>
+    <div id="diagram-shape-library" class="diagram-shape-library" aria-label="Biblioteca de formas"></div>
+    <div id="diagram-shape-description" class="diagram-shape-description" aria-live="polite"></div>
+    <button class="action primary diagram-shape-add" id="diagram-add-shape">＋ Adicionar forma</button>
   </section>
   <section class="panel-content" id="panel-colors" hidden>
     <div class="section-label">Personalização</div><h2>Painel de cores</h2>
