@@ -87,23 +87,23 @@ function criarSvg(tag,attrs,parent){const el=document.createElementNS("http://ww
 function escaparHTML(valor){return String(valor).replace(/[&<>"]/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c];});}
 function renderizarMarkdown(texto){
  let s=escaparHTML(texto||"");
- s=s.replace(/\\[([^\\]]+)\\]\\((https?:\\/\\/[^\\s)]+|mailto:[^\\s)]+)\\)/g,'<a href="$2" target="_blank" rel="noopener noreferrer">$1</a>');
- s=s.replace(/\\*\\*(.+?)\\*\\*/g,"<strong>$1</strong>").replace(/\\*(.+?)\\*/g,"<em>$1</em>");
- s=s.replace(new RegExp("`([^`]+)`","g"),"<code>$1</code>");
- const linhas=s.split("\\n"),saida=[];let lista="",codigo=false,buffer=[];
+ s=s.replace(/\[([^\]]+)\]\((https?:\/\/[^\s)]+|mailto:[^\s)]+)\)/g,'<a href="$2" target="_blank" rel="noopener noreferrer">$1</a>');
+ s=s.replace(/\*\*(.+?)\*\*/g,"<strong>$1</strong>").replace(/\*(.+?)\*/g,"<em>$1</em>");
+ s=s.replace(new RegExp("\x60([^\x60]+)\x60","g"),"<code>$1</code>");
+ const linhas=s.split("\n"),saida=[];let lista="",codigo=false,buffer=[];
  function fechar(){if(lista){saida.push("</"+lista+">");lista="";}}
  linhas.forEach(function(l){
-  if(/^\\x60{3}/.test(l)){fechar();if(codigo){saida.push("<pre><code>"+buffer.join("\\n")+"</code></pre>");buffer=[];}codigo=!codigo;return;}
+  if(/^\x60{3}/.test(l)){fechar();if(codigo){saida.push("<pre><code>"+buffer.join("\n")+"</code></pre>");buffer=[];}codigo=!codigo;return;}
   if(codigo){buffer.push(l);return;}
   let m;
-  if((m=l.match(/^(#{1,3})\\s+(.+)$/))){fechar();const n=m[1].length;saida.push("<h"+n+">"+m[2]+"</h"+n+">");}
-  else if((m=l.match(/^>\\s?(.*)$/))){fechar();saida.push("<blockquote>"+m[1]+"</blockquote>");}
-  else if((m=l.match(/^\\s*[-*]\\s+(.+)$/))){if(lista!=="ul"){fechar();lista="ul";saida.push("<ul>");}saida.push("<li>"+m[1]+"</li>");}
-  else if((m=l.match(/^\\s*\\d+\\.\\s+(.+)$/))){if(lista!=="ol"){fechar();lista="ol";saida.push("<ol>");}saida.push("<li>"+m[1]+"</li>");}
+  if((m=l.match(/^(#{1,3})\s+(.+)$/))){fechar();const n=m[1].length;saida.push("<h"+n+">"+m[2]+"</h"+n+">");}
+  else if((m=l.match(/^>\s?(.*)$/))){fechar();saida.push("<blockquote>"+m[1]+"</blockquote>");}
+  else if((m=l.match(/^\s*[-*]\s+(.+)$/))){if(lista!=="ul"){fechar();lista="ul";saida.push("<ul>");}saida.push("<li>"+m[1]+"</li>");}
+  else if((m=l.match(/^\s*\d+\.\s+(.+)$/))){if(lista!=="ol"){fechar();lista="ol";saida.push("<ol>");}saida.push("<li>"+m[1]+"</li>");}
   else if(/^---+$/.test(l)){fechar();saida.push("<hr>");}
   else{fechar();if(l.trim())saida.push("<p>"+l+"</p>");}
  });
- fechar();if(codigo)saida.push("<pre><code>"+buffer.join("\\n")+"</code></pre>");
+ fechar();if(codigo)saida.push("<pre><code>"+buffer.join("\n")+"</code></pre>");
  return saida.join("");
 }
 function editarTexto(no,grupo){
