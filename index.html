@@ -7,6 +7,7 @@
 <meta name="description" content="Escólio Theory: ambiente para representar, organizar e estudar teorias por mapas conceituais e escólios.">
 <title>Escólio Theory</title>
 <link rel="stylesheet" href="css/app.css">
+<link rel="stylesheet" href="css/planos-teoricos.css">
 </head>
 <body>
 <div class="app">
@@ -49,6 +50,7 @@
   <div class="empty" id="empty" hidden><div><h2>Seu espaço de conhecimento</h2><p>Comece criando um conceito ou carregue o exemplo demonstrativo. Arraste de um ponto de conexão de um conceito até o ponto de outro conceito.</p><button class="primary" onclick="document.getElementById('add-node').click()">Criar primeiro conceito</button></div></div>
   <div class="status">Arraste entre pontos dos conceitos: criar conexão · Ctrl + Z: desfazer</div>
 </section>
+<div id="planos-workspace" hidden></div>
 <aside class="right">
   <div class="panel-tabs" role="tablist" aria-label="Painéis de trabalho">
     <button class="panel-tab active" data-panel="properties" role="tab" aria-selected="true">Propriedades</button>
@@ -98,6 +100,7 @@
 <script src="pacotes/geral.js"></script>
 <script src="pacotes/filosofia.js"></script>
 <script src="exemplos/exemplo.js"></script>
+<script src="js/planos-teoricos-offline.js"></script>
 <script src="js/app.js"></script>
 </body>
 </html>
