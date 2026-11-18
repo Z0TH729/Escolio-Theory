@@ -31,46 +31,91 @@ code:'<path d="m8 17-5-5 5-5m8 10 5-5-5-5m-2-7-4 20"/>',
 filter:'<path d="M4 5h16M7 12h10m-7 7h4"/>',
 refresh:'<path d="M20 7v5h-5M4 17v-5h5"/><path d="M5.6 9A7 7 0 0 1 18 6l2 6M4 12l2 6a7 7 0 0 0 12.4-3"/>',
 home:'<path d="m3 10 9-7 9 7v10a1 1 0 0 1-1 1h-5v-7H9v7H4a1 1 0 0 1-1-1z"/>',
+
+folderOpen:'<path d="M3 7a2 2 0 0 1 2-2h5l2 2h7a2 2 0 0 1 2 2v1H5a2 2 0 0 0-2 2z"/><path d="m3 12 1.5 7h15l1.5-7a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2z"/>',
+filePlus:'<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M12 12v6m-3-3h6"/>',
+fileText:'<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M8 13h8M8 17h8"/>',
+fileImport:'<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h7"/><path d="M14 2v6h6M14 15h7m-3-3 3 3-3 3"/>',
+fileExport:'<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h7"/><path d="M14 2v6h6M14 15H7m3-3-3 3 3 3"/>',
+folderPlus:'<path d="M3 7a2 2 0 0 1 2-2h5l2 2h7a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="M12 10v6m-3-3h6"/>',
+plusCircle:'<circle cx="12" cy="12" r="9"/><path d="M12 8v8m-4-4h8"/>',
+copyPlus:'<rect x="8" y="8" width="13" height="13" rx="2"/><path d="M16 8V5a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h3M14.5 12v5m-2.5-2.5h5"/>',
+text:'<path d="M4 6V4h16v2M12 4v16m-4 0h8"/>',
+functionSquare:'<rect x="3" y="3" width="18" height="18" rx="2"/><path d="M14 7h-2a2 2 0 0 0-2 2v8m-2-5h6"/>',
+shapes:'<rect x="3" y="4" width="8" height="7" rx="1"/><circle cx="17" cy="8" r="4"/><path d="m12 20 4-7 4 7z"/>',
+palette:'<path d="M12 3a9 9 0 1 0 0 18h1.5a2 2 0 0 0 1.2-3.6 1.7 1.7 0 0 1 1-3.1H18a3 3 0 0 0 3-3c0-4.6-4-8.3-9-8.3z"/><circle cx="7.5" cy="11" r="1"/><circle cx="10" cy="7.5" r="1"/><circle cx="15" cy="8" r="1"/>',
+history:'<path d="M3 12a9 9 0 1 0 2.6-6.4L3 8"/><path d="M3 3v5h5m4-1v5l3 2"/>',
+layers:'<path d="m12 3 9 5-9 5-9-5z"/><path d="m3 12 9 5 9-5M3 16l9 5 9-5"/>',
+eye:'<path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7z"/><circle cx="12" cy="12" r="3"/>',
+share:'<circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="m8.7 10.7 6.6-4.4m-6.6 7 6.6 4.4"/>',
+terminal:'<path d="m4 17 6-5-6-5m8 10h8"/>',
+info:'<circle cx="12" cy="12" r="9"/><path d="M12 11v5m0-8h.01"/>',
 };
-function choose(label,id){
- const s=(label+" "+id).normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase();
- if(/[×✕✖]/.test(label)||/fechar|cancelar|remover da lista|sair/.test(s))return "close";
- if(/excluir|apagar|remover|deletar/.test(s))return "trash";
- if(/duplicar|copiar/.test(s))return "copy";
- if(/[↶⟲]/.test(label)||/desfazer/.test(s))return "undo";
- if(/[↷⟳]/.test(label)||/refazer/.test(s))return "redo";
+function choose(label,id,title){
+ const raw=(label+" "+(title||"")+" "+(id||"")).trim();
+ const s=raw.normalize("NFD").replace(/[\\u0300-\\u036f]/g,"").toLowerCase();
+ const key=(id||"").toLowerCase();
+ const porId={
+  "new-project":"filePlus","load-example":"bookOpen","save-json":"save","save-json-copy":"copy",
+  "open-json":"folderOpen","file-open":"fileImport","export-md":"fileExport",
+  "add-node":"plusCircle","add-node-top":"plusCircle","tool-add-node":"plusCircle",
+  "add-formula-block":"functionSquare","add-code-block":"code","add-text":"text","add-text-top":"text",
+  "diagram-add-shape":"shapes","new-folder":"folderPlus","tool-add-folder":"folderPlus",
+  "tool-undo":"undo","tool-redo":"redo","tool-duplicate":"copyPlus","tool-delete":"trash",
+  "zoom-in":"zoomIn","zoom-out":"zoomOut","zoom-reset":"zoomFit",
+  "undo":"undo","redo":"redo","clear-selection":"close","apply-color":"palette","save-color":"palette"
+ };
+ if(porId[key])return porId[key];
+ if(/excluir|apagar|deletar|remover elemento|remover conexao/.test(s))return "trash";
+ if(/duplicar/.test(s))return "copyPlus";
+ if(/copiar/.test(s))return "copy";
+ if(/desfazer/.test(s))return "undo";
+ if(/refazer/.test(s))return "redo";
  if(/aproximar|zoom in/.test(s))return "zoomIn";
  if(/afastar|zoom out/.test(s))return "zoomOut";
  if(/ajustar visualizacao|enquadrar|zoom reset/.test(s))return "zoomFit";
  if(/pesquisar|buscar|search/.test(s))return "search";
- if(/[⇧↑↗]/.test(label)||/importar|abrir arquivo|abrir projeto|abrir/.test(s))return "upload";
- if(/[⇩↓]/.test(label)||/exportar|baixar|download/.test(s))return "download";
+ if(/importar/.test(s))return "fileImport";
+ if(/exportar/.test(s))return "fileExport";
+ if(/abrir projeto|abrir arquivo|abrir/.test(s))return "folderOpen";
+ if(/baixar|download/.test(s))return "download";
  if(/salvar|guardar|save/.test(s))return "save";
+ if(/criar pasta|nova pasta|adicionar pasta/.test(s))return "folderPlus";
+ if(/pasta|diretorio/.test(s))return "folder";
+ if(/novo projeto/.test(s))return "filePlus";
+ if(/novo|adicionar|criar|inserir/.test(s))return "plusCircle";
+ if(/formula|calculo|calcular/.test(s))return "functionSquare";
+ if(/codigo|script|terminal/.test(s))return "code";
+ if(/texto|anotacao|caixa de texto/.test(s))return "text";
+ if(/forma|diagrama|geometria/.test(s))return "shapes";
  if(/imagem|foto/.test(s))return "image";
  if(/conexao|vinculo|relacao|link/.test(s))return "link";
+ if(/cor|paleta|color/.test(s))return "palette";
  if(/configur/.test(s))return "settings";
- if(/formula|unidade|calculo|calcular/.test(s))return "calculator";
- if(/codigo|script|terminal/.test(s))return "code";
- if(/referencia|bibliografia|fonte|citacao|plano|escolio|documento|historico/.test(s))return "book";
- if(/pasta|diretorio/.test(s))return "folder";
- if(/[＋+]/.test(label)||/novo|adicionar|criar|inserir|elemento|conceito|bloco|forma|conexao/.test(s))return "plus";
+ if(/referencia|bibliografia|citacao|fonte/.test(s))return "book";
+ if(/historico|recentes|recent/.test(s))return "history";
+ if(/projeto|documento|arquivo/.test(s))return "fileText";
  if(/atualizar|recarregar/.test(s))return "refresh";
  if(/filtro|filtrar/.test(s))return "filter";
- if(/inicio|voltar/.test(s))return "home";
+ if(/inicio|home/.test(s))return "home";
  if(/renomear|editar|alterar/.test(s))return "edit";
- if(/[⋯…]/.test(label)||/mais|acoes|opcoes|menu/.test(s))return "more";
- if(/restaurar|confirmar|aplicar|usar|selecionar|concluir/.test(s))return "check";
- return "more";
+ if(/mais|acoes|opcoes|menu/.test(s))return "more";
+ if(/ajuda|informacao|sobre/.test(s))return "info";
+ if(/visualizar|visualizacao|mostrar/.test(s))return "eye";
+ if(/compartilhar/.test(s))return "share";
+ if(/restaurar|confirmar|aplicar|selecionar|concluir/.test(s))return "check";
+ if(/[×✕✖]/.test(label)||/fechar|cancelar|limpar selecao/.test(s))return "close";
+ return null;
 }
 function enhance(button){
  if(!(button instanceof HTMLButtonElement)||button.dataset.iconized||button.querySelector("svg,input,select,textarea")||button.classList.contains("nav-item")||button.classList.contains("home-action")||button.classList.contains("panel-tab")||button.classList.contains("diagram-shape-card")||button.classList.contains("palette-swatch")||button.matches(".home-nav button,.pt-plan-item,.pt-folder,.es-entry,.es-folder,.pt-tabs button,.es-tabs button,.fc-area-list button,.fc-entry,.tree-row")||button.querySelector("strong,small"))return;
  if(button.closest(".nav-item,.home-action,.panel-tab,.diagram-shape-card,.palette-swatch,.home-nav,.pt-plan-item,.pt-folder,.es-entry,.es-folder,.pt-tabs,.es-tabs,.fc-area-list,.fc-entry,.tree-row"))return;
  const label=(button.innerText||button.textContent||"").replace(/\s+/g," ").trim();
  if(!label)return;
- const icon=choose(label+" "+button.title,button.id);
+ const icon=choose(label,button.id,button.title);\n if(!icon)return;
  if(!button.title)button.title=label;
  if(!button.getAttribute("aria-label"))button.setAttribute("aria-label",label);
- const svg=document.createElementNS(NS,"svg");svg.setAttribute("viewBox","0 0 24 24");svg.setAttribute("width","16");svg.setAttribute("height","16");svg.setAttribute("aria-hidden","true");svg.setAttribute("focusable","false");svg.setAttribute("class","ui-icon");svg.setAttribute("fill","none");svg.setAttribute("stroke","currentColor");svg.setAttribute("stroke-width","1.7");svg.setAttribute("stroke-linecap","round");svg.setAttribute("stroke-linejoin","round");svg.innerHTML=paths[icon]||paths.more;
+ const svg=document.createElementNS(NS,"svg");svg.setAttribute("viewBox","0 0 24 24");svg.setAttribute("width","16");svg.setAttribute("height","16");svg.setAttribute("aria-hidden","true");svg.setAttribute("focusable","false");svg.setAttribute("class","ui-icon");svg.setAttribute("fill","none");svg.setAttribute("stroke","currentColor");svg.setAttribute("stroke-width","1.7");svg.setAttribute("stroke-linecap","round");svg.setAttribute("stroke-linejoin","round");svg.innerHTML=paths[icon];
  const span=document.createElement("span");span.className="ui-icon-label";span.textContent=label;
  button.replaceChildren(svg,span);button.classList.add("icon-only-button");button.dataset.iconized="true";
 }
