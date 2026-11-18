@@ -12,11 +12,11 @@ Seu conceito central vem do *escólio*: uma anotação marginal que explica, con
 
 ## Estado do projeto
 
-**Versão:** 0.2 — planejamento  
+**Versão:** 0.1.0 — implementação inicial  
 **Estágio:** pré-alfa  
-**Status:** em planejamento; implementação ainda não iniciada.
+**Status:** núcleo inicial implementado; interface e fluxo principal ainda em desenvolvimento.
 
-Este repositório contém a documentação e o planejamento do projeto. As funcionalidades descritas neste README são objetivos de desenvolvimento, não recursos já disponíveis.
+A primeira etapa da v0.1 adicionou configuração, modelo de dados, histórico, migração, validação, registro de pacotes disciplinares, exemplo demonstrativo e página de testes. A aplicação visual ainda não está disponível. As funcionalidades descritas nas seções seguintes são objetivos planejados, salvo quando identificadas como implementadas.
 
 ## Objetivos
 
@@ -105,7 +105,7 @@ O roadmap é uma proposta de evolução e poderá ser ajustado conforme os teste
 
 | Versão | Objetivos |
 | --- | --- |
-| v0.1 — Núcleo | Modelo de dados, canvas SVG, nós, relações, escólios, armazenamento e histórico. |
+| v0.1 — Núcleo | Em andamento: modelo de dados, histórico, migração, validação, pacotes e exemplo inicial implementados; interface, canvas, armazenamento e exportação ainda pendentes. |
 | v0.2 — Visões | Mapa mental, mapa conceitual, busca, filtros e exportações adicionais. |
 | v0.3 — Ensino | Planos aplicados, apresentação, HTML autônomo e pacotes de disciplina. |
 | v0.4 — Dados | Designer de banco de dados e exportação SQL. |
