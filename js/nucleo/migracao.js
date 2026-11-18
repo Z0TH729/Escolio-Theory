@@ -33,6 +33,9 @@
           throw new Error("O campo " + chave + " precisa ser uma lista.");
         }
       });
+      if (!Array.isArray(projeto.pastas)) projeto.pastas = [];
+      if (!Array.isArray(projeto.paletas)) projeto.paletas = [];
+      projeto.nos.forEach(no => { if (no.pastaId === undefined) no.pastaId = null; });
       projeto.visoes = projeto.visoes.map((visao, indice) => {
         if (!visao || typeof visao !== "object" || Array.isArray(visao)) {
           throw new Error("Visão inválida na posição " + indice + ".");
@@ -46,6 +49,9 @@
     if (projeto.escolio !== global.Escolio.config.versaoFormato) {
       throw new Error("Versão de arquivo não suportada: " + String(projeto.escolio));
     }
+    if (!Array.isArray(projeto.pastas)) projeto.pastas = [];
+    if (!Array.isArray(projeto.paletas)) projeto.paletas = [];
+    projeto.nos.forEach(no => { if (no.pastaId === undefined) no.pastaId = null; });
     return projeto;
   };
 
