@@ -36,7 +36,11 @@
       if (!Array.isArray(projeto.pastas)) projeto.pastas = [];
       if (!Array.isArray(projeto.paletas)) projeto.paletas = [];
       projeto.nos.forEach(no => { if (no.pastaId === undefined) no.pastaId = null; if (no.tipo === "texto") { no.dimensoes = Object.assign({ largura: 280, altura: null, modoAltura: "auto" }, no.dimensoes || {}); no.ancoras = Object.assign({ esquerda: true, direita: true, cima: true, baixo: true }, no.ancoras || {}); no.estilo = Object.assign({ fundo: "transparent", contorno: "none", tamanhoFonte: 14 }, no.estilo || {}); } });
-      projeto.arestas.forEach(aresta => { if (aresta.modo === undefined) aresta.modo = "livre"; });
+      projeto.arestas.forEach(aresta => {
+        if (aresta.modo === undefined) aresta.modo = "livre";
+        aresta.estilo = Object.assign({ geometria: "reta", tracado: "continuo", extremidadeInicial: "nenhuma", extremidadeFinal: "nenhuma", cor: aresta.cor || null, espessura: 2, opacidade: 1 }, aresta.estilo || {});
+        aresta.curvatura = Object.assign({ modo: "automatico", arqueamento: 48, controle1: null, controle2: null, pontos: [] }, aresta.curvatura || {});
+      });
       projeto.visoes = projeto.visoes.map((visao, indice) => {
         if (!visao || typeof visao !== "object" || Array.isArray(visao)) {
           throw new Error("Visão inválida na posição " + indice + ".");
@@ -53,7 +57,11 @@
     if (!Array.isArray(projeto.pastas)) projeto.pastas = [];
     if (!Array.isArray(projeto.paletas)) projeto.paletas = [];
     projeto.nos.forEach(no => { if (no.pastaId === undefined) no.pastaId = null; if (no.tipo === "texto") { no.dimensoes = Object.assign({ largura: 280, altura: null, modoAltura: "auto" }, no.dimensoes || {}); no.ancoras = Object.assign({ esquerda: true, direita: true, cima: true, baixo: true }, no.ancoras || {}); no.estilo = Object.assign({ fundo: "transparent", contorno: "none", tamanhoFonte: 14 }, no.estilo || {}); } });
-    projeto.arestas.forEach(aresta => { if (aresta.modo === undefined) aresta.modo = "livre"; });
+    projeto.arestas.forEach(aresta => {
+      if (aresta.modo === undefined) aresta.modo = "livre";
+      aresta.estilo = Object.assign({ geometria: "reta", tracado: "continuo", extremidadeInicial: "nenhuma", extremidadeFinal: "nenhuma", cor: aresta.cor || null, espessura: 2, opacidade: 1 }, aresta.estilo || {});
+      aresta.curvatura = Object.assign({ modo: "automatico", arqueamento: 48, controle1: null, controle2: null, pontos: [] }, aresta.curvatura || {});
+    });
     return projeto;
   };
 
