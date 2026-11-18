@@ -25,11 +25,11 @@ function apply(t,save=true){
  const all=tokens(t);Object.keys(all).forEach(k=>root.style.setProperty("--"+k,all[k]));
  const link=$("#escolio-theme-stylesheet");if(link){if(catalog.some(x=>x.id===t.id)){link.href=path(t);link.disabled=false}else link.disabled=true}
  root.dataset.theme=t.id;root.style.colorScheme=t.modo==="claro"?"light":"dark";
- if(save&&data.scope==="global"){data.global=t.id;write()}
- renderLibrary();renderEditor();renderScope();
+ if(save){if(data.scope==="project")data.project=clone(t);else data.global=t.id;write();if(data.scope==="project")global.EscolioProjetos?.salvar()}
+ renderLibrary();renderScope();
 }
 function applySaved(){const t=data.project||find(data.global)||catalog[0];apply(t,false)}
-function setScope(){data.scope=$("#theme-project-scope")?.checked?"project":"global";write();renderScope()}
+function setScope(){data.scope=$("#theme-project-scope")?.checked?"project":"global";if(data.scope==="project"&&active)data.project=clone(active);if(data.scope==="global"&&active)data.global=active.id;write();renderScope();global.EscolioProjetos?.salvar()}
 function renderScope(){const c=$("#theme-project-scope");if(c)c.checked=data.scope==="project"}
 function categoryOf(t){return t.categoria==="dark"?"dark":t.categoria==="light"?"light":t.categoria==="color"?"colors":t.categoria==="special"?"special":"custom"}
 function card(t){
@@ -37,7 +37,7 @@ function card(t){
  const sw=document.createElement("div");sw.className="theme-swatches";const v=tokens(t);["bg","panel","panel2","accent","accent2"].forEach(k=>{const s=document.createElement("i");s.style.background=v[k];sw.append(s)});
  const info=document.createElement("div");info.className="theme-card-info";const name=document.createElement("strong");name.textContent=t.nome;const meta=document.createElement("small");meta.textContent=(t.modo==="claro"?"Claro":"Escuro")+" · "+(t.categoria==="special"?"Especial":t.categoria==="color"?"Colorido":t.categoria==="custom"?"Personalizado":t.categoria==="light"?"Light":"Dark");info.append(name,meta);
  const fav=document.createElement("button");fav.className="theme-favorite";fav.type="button";fav.textContent=data.favorites.includes(t.id)?"★":"☆";fav.title="Favoritar tema";fav.onclick=e=>{e.stopPropagation();data.favorites=data.favorites.includes(t.id)?data.favorites.filter(x=>x!==t.id):data.favorites.concat(t.id);write();renderLibrary()};
- el.append(sw,info,fav);el.onclick=()=>{draft=clone(t);apply(t);};return el;
+ el.append(sw,info,fav);el.onclick=()=>{draft=clone(t);apply(t);renderEditor();};return el;
 }
 function renderLibrary(){
  const host=$("#theme-library");if(!host)return;host.replaceChildren();
@@ -64,7 +64,7 @@ function colorRow(key){
 }
 function renderEditor(){
  const host=$("#theme-editor-fields"),name=$("#theme-name");if(!host||!draft)return;
- name.value=draft.nome;host.replaceChildren();
+ name.value=draft.nome;const mode=$("#theme-mode");if(mode)mode.value=draft.modo==="claro"?"light":"dark";host.replaceChildren();
  groups.forEach(g=>{const section=document.createElement("section");section.className="theme-editor-group";const h=document.createElement("h3");h.textContent=g.name;section.append(h);[...new Set(g.keys)].forEach(k=>section.append(colorRow(k)));host.append(section)});
 }
 function renderScope(){const c=$("#theme-project-scope");if(c)c.checked=data.scope==="project"}
@@ -73,11 +73,11 @@ function saveCustom(){
  draft.nome=name;draft.categoria="custom";draft.modo=($("#theme-mode").value==="light"?"claro":"escuro");draft.id=draft.id?.startsWith("custom-")?draft.id:"custom-"+Date.now().toString(36);
  const i=data.custom.findIndex(t=>t.id===draft.id);if(i>=0)data.custom[i]=clone(draft);else data.custom.push(clone(draft));
  if(data.scope==="project")data.project=clone(draft);else data.global=draft.id;
- write();apply(draft,false);renderLibrary();alert("Tema personalizado salvo.");
+ write();apply(draft,false);renderLibrary();global.EscolioProjetos?.salvar();alert("Tema personalizado salvo.");
 }
 function newTheme(){draft={id:"custom-"+Date.now().toString(36),nome:"Meu tema",categoria:"custom",modo:"escuro",tokens:Object.assign({},defaults,tokens(active))};apply(draft,false);renderEditor();$("#theme-name")?.focus()}
 function duplicateTheme(){if(!active)return;draft=clone(active);draft.id="custom-"+Date.now().toString(36);draft.nome=active.nome+" (cópia)";draft.categoria="custom";data.custom.push(clone(draft));write();apply(draft,false);renderLibrary();renderEditor()}
-function deleteTheme(){if(!active||!data.custom.some(t=>t.id===active.id))return alert("Somente temas personalizados podem ser excluídos.");if(!confirm("Excluir o tema "+active.nome+"?"))return;data.custom=data.custom.filter(t=>t.id!==active.id);data.favorites=data.favorites.filter(x=>x!==active.id);draft=clone(find(data.global)||catalog[0]);write();apply(draft);renderLibrary()}
+function deleteTheme(){if(!active||!data.custom.some(t=>t.id===active.id))return alert("Somente temas personalizados podem ser excluídos.");if(!confirm("Excluir o tema "+active.nome+"?"))return;data.custom=data.custom.filter(t=>t.id!==active.id);data.favorites=data.favorites.filter(x=>x!==active.id);if(data.project?.id===active.id)data.project=null;draft=clone(find(data.global)||catalog[0]);write();apply(draft);renderLibrary();renderEditor()}
 function exportTheme(){if(!active)return;const blob=new Blob([JSON.stringify({format:"escolio-theme",version:1,theme:active},null,2)],{type:"application/json"}),url=URL.createObjectURL(blob),a=document.createElement("a");a.href=url;a.download=(active.nome.normalize("NFD").replace(/[\u0300-\u036f]/g,"").replace(/[^a-z0-9-_]+/gi,"-")||"tema")+".escolio-theme.json";a.click();setTimeout(()=>URL.revokeObjectURL(url),1000)}
 function importTheme(file){if(!file)return;file.text().then(s=>{const x=JSON.parse(s),t=x.theme;if(x.format!=="escolio-theme"||!t?.tokens)throw Error("Arquivo de tema inválido.");draft=clone(t);draft.id="custom-"+Date.now().toString(36);draft.categoria="custom";data.custom.push(clone(draft));write();apply(draft,false);renderLibrary();renderEditor()}).catch(e=>alert("Não foi possível importar o tema: "+e.message))}
 function bind(){
