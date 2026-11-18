@@ -32,7 +32,7 @@ function iniciarArraste(ev,id,n){
  if(ev.button!==0||ev.shiftKey)return;
  const ponto=pontoNoMapa(ev);if(!ponto)return;
  arraste={id,no:n,grupo:gruposNos.get(id),inicio:ponto,pos:pos(n),original:{x:n.pos.x,y:n.pos.y},moveu:false};
- svg.setPointerCapture(ev.pointerId);
+ ev.currentTarget.setPointerCapture(ev.pointerId);
 }
 svg.addEventListener("pointermove",ev=>{
  if(!arraste)return;
