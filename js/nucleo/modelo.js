@@ -40,7 +40,9 @@
       campos: modelo.clonar(dados.campos || {}),
       pastaId: dados.pastaId || null,
       pos: { x: Number(dados.pos && dados.pos.x) || 0, y: Number(dados.pos && dados.pos.y) || 0 },
-      estilo: { cor: dados.estilo && dados.estilo.cor || "#2b4c7e" }
+      estilo: Object.assign({ cor: "#2b4c7e", fundo: "transparent", contorno: "none", tamanhoFonte: 14, familiaFonte: null }, modelo.clonar(dados.estilo || {})),
+      dimensoes: dados.tipo === "texto" ? Object.assign({ largura: 280, altura: null, modoAltura: "auto" }, modelo.clonar(dados.dimensoes || {})) : undefined,
+      ancoras: dados.tipo === "texto" ? Object.assign({ esquerda: true, direita: true, cima: true, baixo: true }, modelo.clonar(dados.ancoras || {})) : undefined
     };
   };
   modelo.criarAresta = function (de, para, dados) {
