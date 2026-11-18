@@ -18,7 +18,9 @@ function conectoresSugeridos(){
  const pacotes=E.pacotes.listar().flatMap(p=>p.relacoes||[]);
  return Array.from(new Set(base.concat(pacotes))).sort((a,b)=>a.localeCompare(b,"pt-BR"));
 }
-function coordenadaPorta(no,lado,p){p=p||pos(no);if(lado==="esquerda")return {x:p.x-94,y:p.y};if(lado==="direita")return {x:p.x+94,y:p.y};if(lado==="cima")return {x:p.x,y:p.y-35};return {x:p.x,y:p.y+35};}
+function alturaAutomatica(no){const w=Math.max(120,Number(no.dimensoes&&no.dimensoes.largura)||280),chars=Math.max(12,Math.floor((w-24)/7)),linhas=String(no.corpo||"").split("\n").reduce((s,l)=>s+Math.max(1,Math.ceil(l.length/chars)),0);return Math.max(48,linhas*22+16);}
+function dimensoesNo(no){return no.tipo==="texto"?{w:Math.max(120,Number(no.dimensoes&&no.dimensoes.largura)||280),h:no.dimensoes&&no.dimensoes.modoAltura==="manual"&&Number(no.dimensoes.altura)?Number(no.dimensoes.altura):alturaAutomatica(no)}:{w:188,h:70};}
+function coordenadaPorta(no,lado,p){p=p||pos(no);const d=dimensoesNo(no),x=d.w/2,y=d.h/2;if(lado==="esquerda")return {x:p.x-x,y:p.y};if(lado==="direita")return {x:p.x+x,y:p.y};if(lado==="cima")return {x:p.x,y:p.y-y};return {x:p.x,y:p.y+y};}
 function ladoAutomatico(a,b){const p=pos(a),q=pos(b),dx=q.x-p.x,dy=q.y-p.y;return Math.abs(dx)/94>=Math.abs(dy)/35?(dx>=0?"direita":"esquerda"):(dy>=0?"baixo":"cima");}
 function extremidadesAresta(a,noDe,noPara,pDe,pPara){const ld=a.pontos&&lados.includes(a.pontos.de)?a.pontos.de:ladoAutomatico(noDe,noPara);const lp=a.pontos&&lados.includes(a.pontos.para)?a.pontos.para:ladoAutomatico(noPara,noDe);return {de:coordenadaPorta(noDe,ld,pDe),para:coordenadaPorta(noPara,lp,pPara)};}
 function pontoNoMapa(ev){
