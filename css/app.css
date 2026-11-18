@@ -82,3 +82,12 @@
 .edge.selected-edge{pointer-events:stroke}
 #inspector input[type="range"]{width:100%;padding:0}
 #inspector input[type="color"]{width:100%;height:34px;padding:2px}
+
+/* Ferramentas da área Diagramas */
+.diagram-tools{display:flex;gap:5px;align-items:center;padding:5px;background:#151e2be8;border:1px solid var(--line);border-radius:8px}
+.diagram-tools[hidden]{display:none!important}
+.diagram-tools select{max-width:145px;background:#101720;color:var(--text);border:1px solid var(--line);border-radius:6px;padding:7px;font-size:11px}
+.diagram-tools button{font-size:11px;padding:7px 9px;white-space:nowrap}
+.diagram-shape{stroke-width:1.7;vector-effect:non-scaling-stroke}
+.diagram-title{fill:var(--text);font-size:13px;text-anchor:middle;dominant-baseline:middle;pointer-events:none}
+@media(max-width:1150px){.diagram-tools{flex-wrap:wrap;max-width:55vw}.diagram-tools select{max-width:115px}}
