@@ -149,7 +149,7 @@
       texto(a.rotulo, "Rótulo da aresta " + a.id, erros, 300);
       if (a.modo !== undefined && a.modo !== "livre" && a.modo !== "proposicao") erros.push("Modo de relação inválido na aresta " + a.id + ".");
       if (a.modo === "proposicao" && (!a.rotulo || !a.rotulo.trim())) erros.push("Uma proposição formal precisa ter um conector textual.");
-      if (a.cor !== undefined && (typeof a.cor !== "string" || !/^#[0-9a-f]{6}$/i.test(a.cor))) erros.push("Cor inválida na aresta " + a.id + ".");
+      if (a.cor !== undefined && a.cor !== null && (typeof a.cor !== "string" || !/^#[0-9a-f]{6}$/i.test(a.cor))) erros.push("Cor inválida na aresta " + a.id + ".");
       if (a.estilo !== undefined) {
         const s = a.estilo;
         const geometrias = ["reta", "ortogonal", "bezier", "arqueada", "personalizada"];
