@@ -22,6 +22,8 @@
       escolio: Escolio.config.versaoFormato,
       projeto: { id: id("projeto"), titulo: titulo || "Novo projeto", autor: autor || "", criadoEm: agora, atualizadoEm: agora },
       pacotes: [],
+      pastas: [],
+      paletas: [],
       nos: [],
       arestas: [],
       escolios: [],
@@ -36,6 +38,7 @@
       titulo: dados.titulo || "Novo elemento",
       corpo: dados.corpo || "",
       campos: modelo.clonar(dados.campos || {}),
+      pastaId: dados.pastaId || null,
       pos: { x: Number(dados.pos && dados.pos.x) || 0, y: Number(dados.pos && dados.pos.y) || 0 },
       estilo: { cor: dados.estilo && dados.estilo.cor || "#2b4c7e" }
     };
