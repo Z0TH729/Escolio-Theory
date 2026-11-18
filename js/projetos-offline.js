@@ -5,11 +5,11 @@ const KEY="escolio-projetos-v1",PREFIX="escolio-projeto-dados-", $=s=>document.q
 let catalog={schema:1,projects:[]},activeId=null;
 function readCatalog(){try{const x=JSON.parse(localStorage.getItem(KEY));if(x&&x.schema===1&&Array.isArray(x.projects))catalog=x}catch(_){catalog={schema:1,projects:[]}}}
 function writeCatalog(){localStorage.setItem(KEY,JSON.stringify(catalog))}
-function snapshot(){return {mapa:clone(Escolio.nucleo.estado.obterProjeto()),planos:EscolioPlanos?.exportar()||null,escolios:EscolioEscolios?.exportar()||null,imagens:EscolioImagens?.exportar()||[],ciencias:EscolioCiencias?.exportar()||null}}
+function snapshot(){return {mapa:clone(Escolio.nucleo.estado.obterProjeto()),camera:window.EscolioCamera?.obter()||{zoom:1,x:0,y:0},planos:EscolioPlanos?.exportar()||null,escolios:EscolioEscolios?.exportar()||null,imagens:EscolioImagens?.exportar()||[],ciencias:EscolioCiencias?.exportar()||null}}
 function store(id,data){localStorage.setItem(PREFIX+id,JSON.stringify(data))}
 function load(id){try{return JSON.parse(localStorage.getItem(PREFIX+id))}catch(_){return null}}
 function saveCurrent(){if(!activeId)return;try{const p=catalog.projects.find(x=>x.id===activeId);if(!p)return;store(activeId,snapshot());p.updatedAt=now();writeCatalog()}catch(e){console.warn("Falha ao salvar o projeto:",e)}}
-function apply(data){if(!data||!data.mapa)throw Error("O projeto não contém um mapa válido.");Escolio.nucleo.estado.substituirProjeto(data.mapa);EscolioPlanos?.importar(data.planos);EscolioEscolios?.importar(data.escolios);EscolioImagens?.substituir(data.imagens||[]);EscolioCiencias?.importar(data.ciencias||null);saveCurrent()}
+function apply(data){if(!data||!data.mapa)throw Error("O projeto não contém um mapa válido.");Escolio.nucleo.estado.substituirProjeto(data.mapa);EscolioPlanos?.importar(data.planos);EscolioEscolios?.importar(data.escolios);EscolioImagens?.substituir(data.imagens||[]);EscolioCiencias?.importar(data.ciencias||null);window.EscolioCamera?.restaurar(data.camera);saveCurrent()}
 function showEditor(){saveCurrent();$("#home-screen").hidden=true;$("#editor-app").hidden=false}
 function showHome(){saveCurrent();$("#editor-app").hidden=true;$("#home-screen").hidden=false;renderRecent();setHomeView("start")}
 function createRecord(name,data){const id="proj-"+(crypto.randomUUID?crypto.randomUUID():Date.now().toString(36)+Math.random().toString(36).slice(2)),stamp=now(),r={id,name:(name||"Projeto sem título").trim()||"Projeto sem título",createdAt:stamp,updatedAt:stamp,openedAt:stamp};catalog.projects.unshift(r);store(id,data);activeId=id;writeCatalog();apply(data);showEditor();renderRecent()}
