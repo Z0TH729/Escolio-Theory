@@ -5,7 +5,7 @@
   const $ = (s, r = document) => r.querySelector(s);
   const uid = () => "img-" + (crypto.randomUUID ? crypto.randomUUID() : Date.now().toString(36) + Math.random().toString(36).slice(2));
   const allowed = new Set(["image/png","image/jpeg","image/webp","image/svg+xml"]);
-  const maxBytes = 12 * 1024 * 1024;
+  const maxBytes = 2 * 1024 * 1024;
   let items = load(), modal = null;
   function load(){try{const x=JSON.parse(localStorage.getItem(KEY));return Array.isArray(x)?x:[]}catch(_){return []}}
   function save(){try{localStorage.setItem(KEY,JSON.stringify(items));return true}catch(_){alert("A biblioteca atingiu o limite de armazenamento deste navegador. Exporte o projeto ou remova imagens antigas.");return false}}
@@ -37,7 +37,7 @@
     const i=window.Escolio.nucleo.estado.obterProjeto().nos.length;
     const node=window.Escolio.nucleo.estado.adicionarNo({
       tipo:"imagem",titulo:item.name,corpo:"",
-      campos:{imagem:{assetId:item.id,data:item.data,legenda:item.caption||"",posicaoTexto:item.captionPosition||"baixo",textoSeparado:false,largura:item.width||300,altura:item.height||210,ajuste:"conter",rotacao:0,opacidade:1,brilho:100,contraste:100,borda:"none",raio:2}},
+      campos:{imagem:{assetId:item.id,legenda:item.caption||"",posicaoTexto:item.captionPosition||"baixo",textoSeparado:false,largura:item.width||300,altura:item.height||210,ajuste:"conter",rotacao:0,opacidade:1,brilho:100,contraste:100,borda:"none",raio:2}},
       pos:{x:((i%4)-1.5)*190,y:(Math.floor(i/4)-1)*145},
       dimensoes:{largura:item.width||300,altura:item.height||210},
       ancoras:{esquerda:true,direita:true,cima:true,baixo:true}
