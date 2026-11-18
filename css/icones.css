@@ -4,7 +4,9 @@
 .icon-only-button .ui-icon-label{position:absolute!important;width:1px!important;height:1px!important;padding:0!important;margin:-1px!important;overflow:hidden!important;clip:rect(0,0,0,0)!important;white-space:nowrap!important;border:0!important}
 .toolbar .icon-only-button{min-width:34px;min-height:32px}
 .canvas-tools .icon-only-button{min-width:34px;padding:7px!important}
-.sidebar-actions .icon-only-button,.tool-group .icon-only-button,.pt-library-tools .icon-only-button,.pt-left-foot .icon-only-button,.es-library-tools .icon-only-button,.es-actions .icon-only-button,.es-toolbar .icon-only-button{width:100%;justify-content:center}
+.sidebar-actions{grid-template-columns:repeat(3,minmax(0,1fr));gap:5px}
+.sidebar-actions .icon-only-button{width:100%;justify-content:center}
+.tool-group .icon-only-button,.pt-library-tools .icon-only-button,.pt-left-foot .icon-only-button,.es-library-tools .icon-only-button,.es-actions .icon-only-button,.es-toolbar .icon-only-button{width:auto;justify-content:center;margin:3px 4px 3px 0}
 button.icon-only-button:focus-visible{outline:1px solid var(--focus);outline-offset:2px}
 button.icon-only-button[disabled]{opacity:.45;cursor:not-allowed}
 @media(max-width:760px){.icon-only-button{min-width:32px;min-height:32px}}
