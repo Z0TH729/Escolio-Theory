@@ -54,3 +54,6 @@
 .edge{stroke-width:2}
 @media(max-width:1050px){.workspace{grid-template-columns:220px minmax(0,1fr) 270px}}
 @media(max-width:760px){.workspace{grid-template-columns:1fr;grid-template-rows:auto minmax(520px,65vh) auto}.left{display:flex;max-height:none;border-right:0;border-bottom:1px solid var(--line)}.project-tree{max-height:180px}.right{border-left:0}.panel-content{max-height:none}}
+
+/* Relações formais são destacadas sem alterar a identidade visual do mapa. */
+.edge.formal-proposition{stroke-width:2.6;opacity:1}.edge-label.proposition-label{font-weight:650;fill:#d3deed}
