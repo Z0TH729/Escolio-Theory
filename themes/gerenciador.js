@@ -28,7 +28,7 @@ function apply(t,save=true){
  if(save){if(data.scope==="project")data.project=clone(t);else data.global=t.id;write();if(data.scope==="project")global.EscolioProjetos?.salvar()}
  renderLibrary();renderScope();
 }
-function applySaved(){const t=data.project||find(data.global)||catalog[0];apply(t,false)}
+function applySaved(){const t=data.scope==="project"&&data.project?data.project:find(data.global)||catalog[0];apply(t,false)}
 function setScope(){data.scope=$("#theme-project-scope")?.checked?"project":"global";if(data.scope==="project"&&active)data.project=clone(active);if(data.scope==="global"&&active)data.global=active.id;write();renderScope();global.EscolioProjetos?.salvar()}
 function renderScope(){const c=$("#theme-project-scope");if(c)c.checked=data.scope==="project"}
 function categoryOf(t){return t.categoria==="dark"?"dark":t.categoria==="light"?"light":t.categoria==="color"?"colors":t.categoria==="special"?"special":"custom"}
