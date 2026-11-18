@@ -104,6 +104,7 @@
       if (!aresta) throw new Error("Aresta não encontrada.");
       if (!dados || typeof dados !== "object" || Array.isArray(dados)) throw new TypeError("Dados da aresta inválidos.");
       if (Object.prototype.hasOwnProperty.call(dados, "rotulo")) aresta.rotulo = dados.rotulo;
+      if (Object.prototype.hasOwnProperty.call(dados, "modo")) aresta.modo = dados.modo;
       if (Object.prototype.hasOwnProperty.call(dados, "cor")) aresta.cor = dados.cor;
     });
   };
