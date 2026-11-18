@@ -43,7 +43,7 @@
       pastaId: dados.pastaId || null,
       pos: { x: Number(dados.pos && dados.pos.x) || 0, y: Number(dados.pos && dados.pos.y) || 0 },
       estilo: Object.assign(estiloPadrao, modelo.clonar(dados.estilo || {})),
-      dimensoes: (tipo === "texto" || tipo === "imagem" || tipo === "formula") ? Object.assign(tipo === "imagem" ? { largura: 300, altura: 230, modoAltura: "manual" } : tipo === "formula" ? { largura: 440, altura: 360, modoAltura: "manual" } : { largura: 280, altura: null, modoAltura: "auto" }, modelo.clonar(dados.dimensoes || {})) : undefined,
+      dimensoes: (tipo === "texto" || tipo === "imagem" || tipo === "formula" || tipo === "codigo") ? Object.assign(tipo === "imagem" ? { largura: 300, altura: 230, modoAltura: "manual" } : tipo === "formula" ? { largura: 520, altura: 300, modoAltura: "manual" } : tipo === "codigo" ? { largura: 620, altura: 400, modoAltura: "manual" } : { largura: 280, altura: null, modoAltura: "auto" }, modelo.clonar(dados.dimensoes || {})) : undefined,
       ancoras: (tipo === "texto" || tipo === "imagem") ? Object.assign({ esquerda: true, direita: true, cima: true, baixo: true }, modelo.clonar(dados.ancoras || {})) : undefined
     };
   };
