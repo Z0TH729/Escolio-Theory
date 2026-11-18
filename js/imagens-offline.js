@@ -12,7 +12,7 @@
   function sanitizeSvg(source){
     const doc=new DOMParser().parseFromString(source,"image/svg+xml");
     if(doc.querySelector("parsererror"))throw Error("SVG inválido.");
-    doc.querySelectorAll("script,foreignObject,iframe,object,embed,audio,video").forEach(n=>n.remove());
+    doc.querySelectorAll("script,style,foreignObject,iframe,object,embed,audio,video").forEach(n=>n.remove());
     doc.querySelectorAll("*").forEach(el=>Array.from(el.attributes).forEach(a=>{
       if(/^on/i.test(a.name))el.removeAttribute(a.name);
       if((a.name==="href"||a.name==="xlink:href")&&!/^#/.test(a.value))el.removeAttribute(a.name);
@@ -42,7 +42,7 @@
       dimensoes:{largura:item.width||300,altura:item.height||210},
       ancoras:{esquerda:true,direita:true,cima:true,baixo:true}
     });
-    document.querySelector('.nav-item[data-area="mapa"]')?.click();
+    if(document.querySelector(".workspace.pt-active,.workspace.es-active"))document.querySelector('.nav-item[data-area="mapa"]')?.click();
     notify("Imagem adicionada ao espaço de trabalho. Conecte pelos pontos laterais.");
     window.dispatchEvent(new CustomEvent("escolio:image-added",{detail:{id:node.id}}));
   }
