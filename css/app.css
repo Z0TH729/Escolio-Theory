@@ -6,3 +6,6 @@
 @media(max-width:760px){body{overflow:auto;height:auto}.app{height:auto;min-height:100vh;grid-template-rows:auto 1fr}.topbar{flex-wrap:wrap;padding:12px}.brand{min-width:0}.project-name{order:3;flex-basis:100%}.toolbar{margin-left:auto;flex-wrap:wrap}.workspace{grid-template-columns:1fr;grid-template-rows:auto minmax(520px,65vh) auto}.left{display:none}.right{border-top:1px solid var(--line)}.map{min-height:520px}}
 /* Pontos de conexão do mapa */
 .connection-port{fill:#dce5f0;stroke:#526d91;stroke-width:1.5;cursor:crosshair;opacity:.85;transition:opacity .12s,fill .12s}.node:hover .connection-port,.node.selected .connection-port{opacity:1}.connection-port:hover{fill:#7fa4d8;stroke:#dce5f0;opacity:1}.edge-preview{stroke:#8da9d0;stroke-width:2;stroke-dasharray:5 4;pointer-events:none}
+
+/* Seleção e edição de rótulos das conexões */
+.edge{cursor:pointer}.edge.selected-edge{stroke:#a8c6f2;stroke-width:3;opacity:1}.edge-label{cursor:pointer;paint-order:stroke;stroke:#111821;stroke-width:4px;stroke-linejoin:round}.edge-label.selected-edge-label{fill:#dce8fb}
