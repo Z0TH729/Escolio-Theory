@@ -34,8 +34,8 @@ function iniciarArraste(ev,id,n){
  arraste={id,no:n,grupo:gruposNos.get(id),inicio:ponto,pos:pos(n),original:{x:n.pos.x,y:n.pos.y},moveu:false};
  ev.currentTarget.setPointerCapture(ev.pointerId);
 }
-svg.addEventListener("pointermove",ev=>{
- if(conexao){const p=pontoNoMapa(ev);if(p&&linhaTemporaria){linhaTemporaria.setAttribute("x2",p.x);linhaTemporaria.setAttribute("y2",p.y);}return;}
+window.addEventListener("pointermove",ev=>{
+ if(conexao){if(ev.pointerId!==conexao.pointerId)return;const p=pontoNoMapa(ev);if(p&&linhaTemporaria){linhaTemporaria.setAttribute("x2",p.x);linhaTemporaria.setAttribute("y2",p.y);}return;}
  if(!arraste)return;
  const ponto=pontoNoMapa(ev);if(!ponto)return;
  const dx=ponto.x-arraste.inicio.x,dy=ponto.y-arraste.inicio.y;
@@ -51,7 +51,7 @@ function finalizarArraste(ev,cancelado){
   if(!ponto)return;
   const candidatos=atual().nos.filter(x=>x.id!==inicio.id).flatMap(no=>{const c=pos(no);return [[c.x-94,c.y],[c.x+94,c.y],[c.x,c.y-35],[c.x,c.y+35]].map(([x,y])=>({no,distancia:Math.hypot(x-ponto.x,y-ponto.y)}));}).sort((a,b)=>a.distancia-b.distancia);
   const alvo=candidatos[0];
-  if(!alvo||alvo.distancia>16){aviso("Solte exatamente sobre um ponto de conexão.");return;}
+  if(!alvo||alvo.distancia>24){aviso("Solte sobre um dos pontos de conexão do conceito.");return;}
   try{E.nucleo.estado.adicionarAresta(inicio.id,alvo.no.id,{rotulo:"relaciona"});selecionado=alvo.no.id;render();aviso("Conexão criada.");}catch(err){aviso(err.message);}
   return;
  }
@@ -74,7 +74,7 @@ function render(){
  const camadaA=criarSvg("g",{"aria-label":"Relações"}),camadaN=criarSvg("g",{"aria-label":"Conceitos"});
  p.arestas.forEach(a=>{const de=p.nos.find(n=>n.id===a.de),para=p.nos.find(n=>n.id===a.para);if(!de||!para)return;const d=pos(de),q=pos(para),linha=criarSvg("line",{x1:d.x,y1:d.y,x2:q.x,y2:q.y,class:"edge"},camadaA);const t=criarSvg("text",{x:(d.x+q.x)/2,y:(d.y+q.y)/2-9,class:"edge-label"},camadaA);t.textContent=a.rotulo;elementosArestas.push({dados:a,linha,rotulo:t})});
  p.nos.forEach(n=>{const xy=pos(n),g=criarSvg("g",{class:"node"+(n.id===selecionado?" selected":""),transform:"translate("+xy.x+" "+xy.y+")","data-id":n.id,role:"button","aria-label":n.titulo},camadaN);criarSvg("rect",{x:-94,y:-35,width:188,height:70,stroke:n.estilo.cor},g);const t=criarSvg("text",{x:0,y:-2},g);t.textContent=n.titulo.length>24?n.titulo.slice(0,22)+"…":n.titulo;const s=criarSvg("text",{x:0,y:18,class:"sub"},g);s.textContent=n.tipo;
-  [[-94,0],[94,0],[0,-35],[0,35]].forEach(([x,y])=>{const porta=criarSvg("circle",{cx:x,cy:y,r:5,class:"connection-port",tabindex:"0"},g);porta.addEventListener("pointerdown",ev=>{if(ev.button!==0)return;ev.preventDefault();ev.stopPropagation();svg.setPointerCapture(ev.pointerId);conexao={id:n.id};const base=pos(n);linhaTemporaria=criarSvg("line",{x1:base.x+x,y1:base.y+y,x2:base.x+x,y2:base.y+y,class:"edge edge-preview"},camadaA);});});
+  [[-94,0],[94,0],[0,-35],[0,35]].forEach(([x,y])=>{const porta=criarSvg("circle",{cx:x,cy:y,r:5,class:"connection-port",tabindex:"0"},g);porta.addEventListener("pointerdown",ev=>{if(ev.button!==0)return;ev.preventDefault();ev.stopPropagation();ev.currentTarget.setPointerCapture(ev.pointerId);conexao={id:n.id,pointerId:ev.pointerId};const base=pos(n);linhaTemporaria=criarSvg("line",{x1:base.x+x,y1:base.y+y,x2:base.x+x,y2:base.y+y,class:"edge edge-preview"},camadaA);});});
   gruposNos.set(n.id,g);g.addEventListener("pointerdown",ev=>iniciarArraste(ev,n.id,n));g.addEventListener("click",ev=>{ev.stopPropagation();if(Date.now()<bloquearCliqueAte)return;if(selecionado!==n.id){selecionado=n.id;gruposNos.forEach((grupo,id)=>grupo.classList.toggle("selected",id===n.id));renderInspector(atual());}});
  g.addEventListener("dblclick",ev=>{ev.preventDefault();ev.stopPropagation();if(Date.now()<bloquearCliqueAte)return;selecionado=n.id;origemConexao=null;gruposNos.forEach((grupo,id)=>grupo.classList.toggle("selected",id===n.id));renderInspector(atual());$("#node-title")?.focus();$("#node-title")?.select();aviso("Edição aberta no painel de propriedades.");});});
  $("#empty").hidden=p.nos.length>0;$("#count-nodes").textContent=p.nos.length;$("#count-edges").textContent=p.arestas.length;$("#project-title").textContent=p.projeto.titulo;
