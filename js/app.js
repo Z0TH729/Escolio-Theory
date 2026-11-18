@@ -10,7 +10,7 @@ let areaAtiva="mapa", zoomAtual=1;
 let formaBibliotecaSelecionada="retangulo";
 function aviso(msg){toast.textContent=msg;toast.classList.add("show");clearTimeout(aviso.t);aviso.t=setTimeout(()=>toast.classList.remove("show"),2400)}
 function atual(){return E.nucleo.estado.obterProjeto()}
-function salvarLocal(){try{localStorage.setItem("escolio-projeto",JSON.stringify(atual()));window.EscolioProjetos?.salvar()}catch(e){aviso("Não foi possível salvar automaticamente.")}}
+function salvarLocal(){try{window.EscolioProjetos?.salvar()}catch(e){aviso("Não foi possível salvar automaticamente.")}}
 function carregar(p){E.nucleo.estado.substituirProjeto(p);selecionado=null;render()}
 function pos(n){return {x:centro.x+n.pos.x,y:centro.y+n.pos.y}}
 const lados=["esquerda","direita","cima","baixo"];
