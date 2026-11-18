@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#10151d">
+<meta name="description" content="Escólio Theory: ambiente para representar, organizar e estudar teorias por mapas conceituais e escólios.">
+<title>Escólio Theory</title>
+<link rel="stylesheet" href="css/app.css">
+</head>
+<body>
+<div class="app">
+<header class="topbar">
+  <div class="brand"><div class="mark">E</div><div><strong>Escólio Theory</strong><small>Ambiente de conhecimento</small></div></div>
+  <div class="project-name">Projeto: <strong id="project-title">Carregando…</strong></div>
+  <nav class="toolbar" aria-label="Ações do projeto">
+    <button id="undo" title="Desfazer (Ctrl+Z)">↶</button><button id="redo" title="Refazer">↷</button>
+    <button id="open-json">Abrir</button><button id="save-json" class="primary">Salvar JSON</button>
+  </nav>
+</header>
+<main class="workspace">
+<aside class="left">
+  <div class="section-label">Projeto</div>
+  <button class="action" id="new-project">＋ Novo projeto</button>
+  <button class="action" id="load-example">◈ Carregar exemplo <span>↗</span></button>
+  <div class="section-label" style="margin-top:28px">Elementos</div>
+  <button class="action primary" id="add-node">＋ Adicionar conceito</button>
+  <p>Crie elementos e organize as relações entre teorias, conceitos e aplicações.</p>
+  <div class="section-label" style="margin-top:28px">Exportação</div>
+  <button class="action" id="export-md">⇩ Exportar Markdown</button>
+  <button class="action" id="save-json">⇩ Exportar projeto JSON</button>
+  <div class="stat"><div><b id="count-nodes">0</b><small>Elementos</small></div><div><b id="count-edges">0</b><small>Relações</small></div></div>
+  <p class="footer-note">Versão 0.1.0 · Pré-alfa<br>Os dados são armazenados localmente neste navegador. Exporte o JSON para manter uma cópia externa.</p>
+</aside>
+<section class="canvas-wrap" aria-label="Mapa conceitual">
+  <div class="canvas-head"><b>Mapa conceitual</b><small>Organize ideias e relações</small></div>
+  <div class="canvas-tools"><button id="add-node-top">＋ Elemento</button><button id="clear-selection" title="Limpar seleção">Limpar seleção</button></div>
+  <svg id="map" class="map" viewBox="0 0 1200 760" role="img" aria-label="Mapa conceitual do projeto"></svg>
+  <div class="empty" id="empty" hidden><div><h2>Seu espaço de conhecimento</h2><p>Comece criando um conceito ou carregue o exemplo demonstrativo. Selecione dois elementos com Shift + clique para criar uma relação.</p><button class="primary" onclick="document.getElementById('add-node').click()">Criar primeiro conceito</button></div></div>
+  <div class="status">Shift + clique em dois elementos: criar relação · Ctrl + Z: desfazer</div>
+</section>
+<aside class="right">
+  <div class="section-label">Propriedades</div><h2>Inspetor de elemento</h2>
+  <div id="inspector"><p class="hint">Carregando inspetor…</p></div>
+</aside>
+</main>
+</div>
+<input class="file-input" id="file-open" type="file" accept="application/json,.json">
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<script src="js/config.js"></script>
+<script src="js/nucleo/modelo.js"></script>
+<script src="js/nucleo/historico.js"></script>
+<script src="js/nucleo/migracao.js"></script>
+<script src="js/nucleo/validacao.js"></script>
+<script src="js/nucleo/estado.js"></script>
+<script src="pacotes/index.js"></script>
+<script src="pacotes/geral.js"></script>
+<script src="pacotes/filosofia.js"></script>
+<script src="exemplos/exemplo.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
