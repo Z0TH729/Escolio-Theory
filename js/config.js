@@ -14,7 +14,7 @@
     versaoFormato: "0.1",
     tamanhoMaximoArquivo: 5 * 1024 * 1024,
     tamanhoMaximoTexto: 100000,
-    tiposNoNucleo: ["conceito", "teoria", "aplicacao", "etapa", "entidade", "nota", "imagem", "formula"],
+    tiposNoNucleo: ["conceito", "teoria", "aplicacao", "etapa", "entidade", "nota", "imagem", "formula", "codigo"],
     tiposAresta: ["relacao", "hierarquia", "sequencia", "referencia"],
     tiposEscolio: ["aplicacao", "exemplo", "exercicio", "referencia", "duvida", "comentario"],
     tiposCampo: ["texto", "lista", "numero", "data", "formula", "codigo", "citacao", "link"]
