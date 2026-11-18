@@ -41,7 +41,7 @@ function atualizarArestas(){
  });
 }
 function iniciarArraste(ev,id,n){
- if(ev.button!==0||ev.target.classList.contains('connection-port')||ev.target.classList.contains('text-resize-handle')||ev.target.closest('foreignObject'))return;
+ if(ev.button!==0||ev.target.classList.contains('connection-port')||ev.target.classList.contains('text-resize-handle'))return;
  const ponto=pontoNoMapa(ev);if(!ponto)return;
  arraste={id,no:n,grupo:gruposNos.get(id),inicio:ponto,pos:pos(n),original:{x:n.pos.x,y:n.pos.y},moveu:false};
  ev.currentTarget.setPointerCapture(ev.pointerId);
