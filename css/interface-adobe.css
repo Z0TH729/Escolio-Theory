@@ -28,7 +28,7 @@ button:hover{background:#484848;border-color:#777}
 button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{
   outline:1px solid var(--focus);outline-offset:1px
 }
-button.primary{background:#4a6688;border-color:#617f a3;color:#fff}
+button.primary{background:#4a6688;border-color:#617fa3;color:#fff}
 button.primary:hover{background:#58779d}
 button.danger{color:#e2a0a0}
 .app{grid-template-rows:56px minmax(0,1fr)}
