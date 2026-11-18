@@ -32,7 +32,7 @@ function renderInspector(p){
 }
 function novoNo(){const p=atual(),i=p.nos.length;const ang=i*2.399,raio=130+Math.floor(i/7)*65;const n=E.nucleo.estado.adicionarNo({titulo:"Novo conceito",tipo:"conceito",corpo:"",pos:{x:Math.round(Math.cos(ang)*raio),y:Math.round(Math.sin(ang)*raio)}});selecionado=n.id;render();$("#node-title")?.focus();aviso("Elemento criado.")}
 function baixar(nome,conteudo,tipo){const blob=new Blob([conteudo],{type:tipo}),url=URL.createObjectURL(blob),a=document.createElement("a");a.href=url;a.download=nome;a.click();URL.revokeObjectURL(url)}
-$("#add-node").onclick=novoNo;$("#add-node-top").onclick=novoNo;
+$("#add-node").onclick=novoNo;$("#add-node-top").onclick=novoNo;$("#save-json-copy").onclick=()=>$("#save-json").click();
 $("#new-project").onclick=()=>{if(!confirm("Criar um projeto vazio? As alterações atuais já estão salvas neste navegador."))return;const p=E.nucleo.modelo.criarProjeto("Novo projeto");carregar(p);aviso("Novo projeto criado.")};
 $("#load-example").onclick=()=>{carregar(E.exemplos.aprendizagemSignificativa());aviso("Exemplo carregado.")};
 $("#save-json").onclick=()=>baixar("escolio-projeto.json",JSON.stringify(atual(),null,2),"application/json");
