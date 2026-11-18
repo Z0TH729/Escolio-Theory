@@ -14,11 +14,11 @@ Seu conceito central vem do *escólio*: uma anotação marginal que explica, con
 
 **Versão:** 0.1.0 — implementação inicial  
 **Estágio:** pré-alfa  
-**Status:** núcleo inicial implementado; interface e fluxo principal ainda em desenvolvimento.
+**Status:** interface inicial publicada em pré-alfa; núcleo de dados e mapa conceitual básico disponíveis para testes.
 
-A primeira etapa da v0.1 adicionou configuração, modelo de dados, histórico, migração, validação, registro de pacotes disciplinares, exemplo demonstrativo e página de testes. A aplicação visual ainda não está disponível. As funcionalidades descritas nas seções seguintes são objetivos planejados, salvo quando identificadas como implementadas.
+O núcleo inicial inclui configuração, modelo de dados, histórico, migração, validação, pacotes disciplinares e projeto demonstrativo. A interface inicial permite criar e editar conceitos, estabelecer relações, adicionar escólios e importar ou exportar projetos JSON. Esta versão é pré-alfa e ainda não representa o conjunto completo de funcionalidades planejadas.
 
-## Objetivos
+## Aplicação\n\n**Acessar:** [Escólio Theory — GitHub Pages](https://z0th729.github.io/Escolio-Theory/)\n\nO endereço público usa o nome técnico do repositório (`Escolio-Theory`), sem acentos.\n\n## Objetivos
 
 - Representar teorias e conceitos por meio de nós tipados e relações nomeadas.
 - Organizar conhecimento em diferentes visualizações, usando um modelo de dados comum.
@@ -105,7 +105,7 @@ O roadmap é uma proposta de evolução e poderá ser ajustado conforme os teste
 
 | Versão | Objetivos |
 | --- | --- |
-| v0.1 — Núcleo | Em andamento: modelo de dados, histórico, migração, validação, pacotes e exemplo inicial implementados; interface, canvas, armazenamento e exportação ainda pendentes. |
+| v0.1 — Núcleo | Em andamento: núcleo, interface inicial, mapa conceitual básico, edição de nós, relações, escólios e importação/exportação JSON implementados; recursos avançados, armazenamento persistente robusto e exportações adicionais pendentes. |
 | v0.2 — Visões | Mapa mental, mapa conceitual, busca, filtros e exportações adicionais. |
 | v0.3 — Ensino | Planos aplicados, apresentação, HTML autônomo e pacotes de disciplina. |
 | v0.4 — Dados | Designer de banco de dados e exportação SQL. |
