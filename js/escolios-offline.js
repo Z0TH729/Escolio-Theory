@@ -69,5 +69,5 @@ document.addEventListener("click",ev=>{const nav=ev.target.closest('.nav-item[da
 document.addEventListener("click",ev=>{if(ev.target.closest(".nav-item")&&!ev.target.closest('.nav-item[data-area="escolios"]')&&document.querySelector(".workspace.es-active")){document.querySelector(".workspace").classList.remove("es-active");$("#escolios-workspace").hidden=true}},true);
 document.addEventListener("keydown",ev=>{if(document.querySelector(".workspace.es-active")&&(ev.ctrlKey||ev.metaKey)&&ev.key.toLowerCase()==="s"){ev.preventDefault();save()}});
 window.addEventListener("beforeunload",save);
-window.EscolioEscolios={offline:true,version:"1.0.0"};
+window.EscolioEscolios={offline:true,version:"1.0.0",exportar:()=>clone(db),importar:dado=>{db=Object.assign(empty(),dado&&typeof dado==="object"?clone(dado):{});save();render()}};
 })();
