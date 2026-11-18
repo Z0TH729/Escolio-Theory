@@ -8,23 +8,46 @@
   "use strict";
   const modelo = global.Escolio.nucleo.modelo;
   const migracao = {};
+
   migracao.paraVersaoAtual = function (entrada) {
-    const projeto = modelo.clonar(entrada);
-    if (!projeto || typeof projeto !== "object") throw new Error("Projeto inválido.");
+    if (!entrada || typeof entrada !== "object" || Array.isArray(entrada)) {
+      throw new Error("Projeto inválido: era esperado um objeto JSON.");
+    }
+    let projeto;
+    try {
+      projeto = modelo.clonar(entrada);
+    } catch (erro) {
+      throw new Error("Não foi possível copiar os dados do projeto: " + erro.message);
+    }
+    if (!projeto || typeof projeto !== "object" || Array.isArray(projeto)) {
+      throw new Error("Projeto inválido.");
+    }
+
     if (projeto.escolio === "0.1") {
-      projeto.pacotes = Array.isArray(projeto.pacotes) ? projeto.pacotes : [];
-      projeto.nos = Array.isArray(projeto.nos) ? projeto.nos : [];
-      projeto.arestas = Array.isArray(projeto.arestas) ? projeto.arestas : [];
-      projeto.escolios = Array.isArray(projeto.escolios) ? projeto.escolios : [];
-      projeto.visoes = Array.isArray(projeto.visoes) ? projeto.visoes : [];
-      projeto.visoes = projeto.visoes.map(v => Object.assign({ configuracao: {} }, v));
+      if (!projeto.projeto || typeof projeto.projeto !== "object" || Array.isArray(projeto.projeto)) {
+        throw new Error("Metadados do projeto ausentes ou inválidos.");
+      }
+      ["pacotes", "nos", "arestas", "escolios", "visoes"].forEach(chave => {
+        if (projeto[chave] === undefined) projeto[chave] = [];
+        else if (!Array.isArray(projeto[chave])) {
+          throw new Error("O campo " + chave + " precisa ser uma lista.");
+        }
+      });
+      projeto.visoes = projeto.visoes.map((visao, indice) => {
+        if (!visao || typeof visao !== "object" || Array.isArray(visao)) {
+          throw new Error("Visão inválida na posição " + indice + ".");
+        }
+        return Object.assign({ configuracao: {} }, visao);
+      });
       projeto.escolio = global.Escolio.config.versaoFormato;
       return projeto;
     }
+
     if (projeto.escolio !== global.Escolio.config.versaoFormato) {
-      throw new Error("Versão de arquivo não suportada: " + projeto.escolio);
+      throw new Error("Versão de arquivo não suportada: " + String(projeto.escolio));
     }
     return projeto;
   };
+
   global.Escolio.nucleo.migracao = migracao;
 })(window);
