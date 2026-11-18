@@ -4,18 +4,64 @@
 const E=window.Escolio, $=s=>document.querySelector(s);
 const svg=$("#map"), toast=$("#toast");
 let selecionado=null, origemConexao=null, projeto=E.exemplos.aprendizagemSignificativa();
+let arraste=null, bloquearCliqueAte=0, gruposNos=new Map(), elementosArestas=[];
 const centro={x:600,y:380};
 function aviso(msg){toast.textContent=msg;toast.classList.add("show");clearTimeout(aviso.t);aviso.t=setTimeout(()=>toast.classList.remove("show"),2400)}
 function atual(){return E.nucleo.estado.obterProjeto()}
 function salvarLocal(){try{localStorage.setItem("escolio-projeto",JSON.stringify(atual()))}catch(e){aviso("Não foi possível salvar automaticamente.")}}
 function carregar(p){E.nucleo.estado.substituirProjeto(p);selecionado=null;render()}
 function pos(n){return {x:centro.x+n.pos.x,y:centro.y+n.pos.y}}
+function pontoNoMapa(ev){
+ const matriz=svg.getScreenCTM();
+ if(!matriz) return null;
+ const ponto=svg.createSVGPoint();ponto.x=ev.clientX;ponto.y=ev.clientY;
+ const convertido=ponto.matrixTransform(matriz.inverse());
+ return {x:convertido.x,y:convertido.y};
+}
+function atualizarArestas(){
+ elementosArestas.forEach(item=>{
+  const a=item.dados,de=arraste&&arraste.id===a.de?arraste.pos:pos(atual().nos.find(n=>n.id===a.de));
+  const para=arraste&&arraste.id===a.para?arraste.pos:pos(atual().nos.find(n=>n.id===a.para));
+  if(!de||!para)return;
+  item.linha.setAttribute("x1",de.x);item.linha.setAttribute("y1",de.y);
+  item.linha.setAttribute("x2",para.x);item.linha.setAttribute("y2",para.y);
+  item.rotulo.setAttribute("x",(de.x+para.x)/2);item.rotulo.setAttribute("y",(de.y+para.y)/2-9);
+ });
+}
+function iniciarArraste(ev,id,n){
+ if(ev.button!==0||ev.shiftKey)return;
+ const ponto=pontoNoMapa(ev);if(!ponto)return;
+ arraste={id,no:n,grupo:gruposNos.get(id),inicio:ponto,pos:pos(n),original:{x:n.pos.x,y:n.pos.y},moveu:false};
+ svg.setPointerCapture(ev.pointerId);
+}
+svg.addEventListener("pointermove",ev=>{
+ if(!arraste)return;
+ const ponto=pontoNoMapa(ev);if(!ponto)return;
+ const dx=ponto.x-arraste.inicio.x,dy=ponto.y-arraste.inicio.y;
+ if(!arraste.moveu&&Math.hypot(dx,dy)<3)return;
+ arraste.moveu=true;arraste.pos={x:centro.x+arraste.original.x+dx,y:centro.y+arraste.original.y+dy};
+ arraste.grupo.setAttribute("transform","translate("+arraste.pos.x+" "+arraste.pos.y+")");
+ atualizarArestas();
+});
+function finalizarArraste(ev,cancelado){
+ if(!arraste)return;
+ const a=arraste;arraste=null;
+ if(a.moveu){
+  bloquearCliqueAte=Date.now()+250;
+  if(cancelado){render();return}
+  try{E.nucleo.estado.atualizarNo(a.id,{pos:{x:a.pos.x-centro.x,y:a.pos.y-centro.y}})}
+  catch(err){aviso("Não foi possível mover: "+err.message);render()}
+ }
+}
+svg.addEventListener("pointerup",ev=>finalizarArraste(ev,false));
+svg.addEventListener("pointercancel",ev=>finalizarArraste(ev,true));
 function criarSvg(tag,attrs,parent){const el=document.createElementNS("http://www.w3.org/2000/svg",tag);Object.entries(attrs||{}).forEach(([k,v])=>el.setAttribute(k,v));(parent||svg).appendChild(el);return el}
 function render(){
  const p=atual();svg.replaceChildren();
+ gruposNos=new Map();elementosArestas=[];
  const camadaA=criarSvg("g",{"aria-label":"Relações"}),camadaN=criarSvg("g",{"aria-label":"Conceitos"});
- p.arestas.forEach(a=>{const de=p.nos.find(n=>n.id===a.de),para=p.nos.find(n=>n.id===a.para);if(!de||!para)return;const d=pos(de),q=pos(para);criarSvg("line",{x1:d.x,y1:d.y,x2:q.x,y2:q.y,class:"edge"},camadaA);const t=criarSvg("text",{x:(d.x+q.x)/2,y:(d.y+q.y)/2-9,class:"edge-label"},camadaA);t.textContent=a.rotulo});
- p.nos.forEach(n=>{const xy=pos(n),g=criarSvg("g",{class:"node"+(n.id===selecionado?" selected":""),transform:"translate("+xy.x+" "+xy.y+")","data-id":n.id,role:"button","aria-label":n.titulo},camadaN);criarSvg("rect",{x:-94,y:-35,width:188,height:70,stroke:n.estilo.cor},g);const t=criarSvg("text",{x:0,y:-2},g);t.textContent=n.titulo.length>24?n.titulo.slice(0,22)+"…":n.titulo;const s=criarSvg("text",{x:0,y:18,class:"sub"},g);s.textContent=n.tipo;g.addEventListener("click",ev=>{ev.stopPropagation();if(ev.shiftKey){if(!origemConexao){origemConexao=n.id;selecionado=n.id;aviso("Origem selecionada. Shift+clique no destino.");render()}else if(origemConexao!==n.id){try{E.nucleo.estado.adicionarAresta(origemConexao,n.id,{rotulo:"relaciona"});origemConexao=null;selecionado=n.id;render();aviso("Relação criada.")}catch(err){aviso(err.message)}}}else{selecionado=n.id;origemConexao=null;render()}})});
+ p.arestas.forEach(a=>{const de=p.nos.find(n=>n.id===a.de),para=p.nos.find(n=>n.id===a.para);if(!de||!para)return;const d=pos(de),q=pos(para);criarSvg("line",{x1:d.x,y1:d.y,x2:q.x,y2:q.y,class:"edge"},camadaA);const t=criarSvg("text",{x:(d.x+q.x)/2,y:(d.y+q.y)/2-9,class:"edge-label"},camadaA);t.textContent=a.rotulo;elementosArestas.push({dados:a,linha:camadaA.lastChild,rotulo:t})});
+ p.nos.forEach(n=>{const xy=pos(n),g=criarSvg("g",{class:"node"+(n.id===selecionado?" selected":""),transform:"translate("+xy.x+" "+xy.y+")","data-id":n.id,role:"button","aria-label":n.titulo},camadaN);criarSvg("rect",{x:-94,y:-35,width:188,height:70,stroke:n.estilo.cor},g);const t=criarSvg("text",{x:0,y:-2},g);t.textContent=n.titulo.length>24?n.titulo.slice(0,22)+"…":n.titulo;const s=criarSvg("text",{x:0,y:18,class:"sub"},g);s.textContent=n.tipo;gruposNos.set(n.id,g);g.addEventListener("pointerdown",ev=>iniciarArraste(ev,n.id,n));g.addEventListener("click",ev=>{ev.stopPropagation();if(Date.now()<bloquearCliqueAte)return;if(ev.shiftKey){if(!origemConexao){origemConexao=n.id;selecionado=n.id;aviso("Origem selecionada. Shift+clique no destino.");render()}else if(origemConexao!==n.id){try{E.nucleo.estado.adicionarAresta(origemConexao,n.id,{rotulo:"relaciona"});origemConexao=null;selecionado=n.id;render();aviso("Relação criada.")}catch(err){aviso(err.message)}}}else{selecionado=n.id;origemConexao=null;render()}})});
  $("#empty").hidden=p.nos.length>0;$("#count-nodes").textContent=p.nos.length;$("#count-edges").textContent=p.arestas.length;$("#project-title").textContent=p.projeto.titulo;
  renderInspector(p);
 }
